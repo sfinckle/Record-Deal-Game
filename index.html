@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Deal Desk – Record Contract Negotiation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  --page: #C7CDCA;
+  --panel: #EDF0EC;
+  --panel-2: #E1E5E1;
+  --groove: #9BA4A1;
+  --ink: #1D262E;
+  --muted: #56636A;
+  --artist: #3B44B5;
+  --label: #BF2D38;
+  --led: #2E9D4E;
+  --amber: #DB9A12;
+  --led-off: #B9C0BC;
+  --cap: #F7F8F6;
+  --scribble: #FBFBF7;
+  --sans: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --serif: "Newsreader", Georgia, "Times New Roman", serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page: #20262B; --panel: #2B3238; --panel-2: #343C43; --groove: #59646B;
+    --ink: #E8ECEA; --muted: #A3AEB3; --artist: #8D94FF; --label: #FF6B73;
+    --led: #49C46C; --amber: #F1B640; --led-off: #47525A; --cap: #D9DEDB; --scribble: #3A434A;
+  }
+}
+:root[data-theme="dark"] {
+  --page: #20262B; --panel: #2B3238; --panel-2: #343C43; --groove: #59646B;
+  --ink: #E8ECEA; --muted: #A3AEB3; --artist: #8D94FF; --label: #FF6B73;
+  --led: #49C46C; --amber: #F1B640; --led-off: #47525A; --cap: #D9DEDB; --scribble: #3A434A;
+}
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+*, *::before, *::after { box-sizing: inherit; }
+body { margin: 0; background: var(--page); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.45; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--artist); outline-offset: 2px; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 20px 20px 48px; }
+h1, h2, h3 { margin: 0; line-height: 1.1; }
+.hidden { display: none !important; }
+
+/* ---------- Intro ---------- */
+.intro-head { display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; align-items: end; padding: 28px 0 24px; }
+.intro-head h1 { font-size: clamp(44px, 7vw, 92px); font-weight: 800; font-stretch: 70%; letter-spacing: -0.01em; line-height: 0.92; }
+.intro-head p { font-family: var(--serif); font-size: 20px; line-height: 1.5; margin: 0; max-width: 34em; }
+.mini-console { display: flex; gap: 10px; height: 140px; align-items: stretch; justify-content: flex-end; }
+.mini-console span { width: 22px; background: var(--panel); border-radius: 4px; position: relative; box-shadow: inset 0 0 0 1px var(--groove); }
+.mini-console span::before { content: ""; position: absolute; left: 50%; top: 10px; bottom: 10px; width: 3px; transform: translateX(-50%); background: var(--groove); border-radius: 2px; }
+.mini-console span::after { content: ""; position: absolute; left: 2px; right: 2px; height: 14px; bottom: var(--h); background: var(--cap); border-radius: 2px; box-shadow: 0 1px 2px rgba(0,0,0,.35), inset 0 -3px 0 var(--c, var(--artist)); }
+@media (prefers-reduced-motion: no-preference) {
+  .mini-console span::after { animation: rise 1.4s cubic-bezier(.2,.8,.2,1) both; animation-delay: var(--d); }
+  @keyframes rise { from { bottom: 6px; } }
+}
+.section-title { font-size: 22px; font-weight: 700; font-stretch: 85%; margin: 28px 0 14px; }
+.clients { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.client { text-align: left; background: var(--panel); border: 0; border-radius: 6px; padding: 20px; cursor: pointer; display: flex; flex-direction: column; gap: 10px; box-shadow: inset 0 0 0 1px var(--groove); }
+.client:hover { box-shadow: inset 0 0 0 2px var(--artist); }
+.client h3 { font-size: 26px; font-stretch: 80%; font-weight: 800; }
+.client .kind { color: var(--muted); font-size: 14px; }
+.client p { margin: 0; font-family: var(--serif); font-size: 17px; }
+.client dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin: 4px 0 0; font-size: 14px; }
+.client dt { color: var(--muted); }
+.client dd { margin: 0; font-weight: 600; }
+.lev { display: inline-flex; gap: 3px; vertical-align: middle; }
+.lev i { width: 10px; height: 10px; border-radius: 2px; background: var(--led-off); }
+.lev i.on { background: var(--led); }
+.how { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 0; padding: 0; list-style: none; counter-reset: step; }
+.how li { counter-increment: step; background: var(--panel-2); border-radius: 6px; padding: 16px 18px; font-size: 15px; }
+.how li::before { content: counter(step); display: block; font-weight: 800; font-size: 28px; font-stretch: 70%; color: var(--artist); }
+.teacher { margin-top: 28px; background: var(--panel); border-radius: 6px; box-shadow: inset 0 0 0 1px var(--groove); }
+.teacher summary { cursor: pointer; padding: 16px 20px; font-weight: 700; font-size: 18px; }
+.teacher .body { padding: 0 20px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 32px; font-size: 15px; }
+.teacher h4 { margin: 14px 0 4px; font-size: 15px; }
+.teacher ul, .teacher ol { margin: 0; padding-left: 20px; }
+.teacher li { margin: 3px 0; }
+
+/* ---------- Desk ---------- */
+.topbar { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; padding: 6px 0 16px; }
+.topbar h2 { font-size: 30px; font-stretch: 75%; font-weight: 800; }
+.topbar .who { color: var(--muted); font-size: 15px; }
+.status { display: flex; gap: 22px; align-items: center; font-size: 14px; }
+.status b { font-size: 18px; }
+.leds { display: inline-flex; gap: 4px; margin-left: 6px; vertical-align: middle; }
+.leds i { width: 12px; height: 12px; border-radius: 50%; background: var(--led-off); }
+.leds i.on { background: var(--led); box-shadow: 0 0 6px var(--led); }
+.leds.low i.on { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+.leds.crit i.on { background: var(--label); box-shadow: 0 0 6px var(--label); }
+.linkbtn { background: none; border: 0; color: var(--muted); text-decoration: underline; cursor: pointer; padding: 0; font-size: 14px; }
+
+.desk { display: grid; grid-template-columns: minmax(0, 2.05fr) minmax(300px, 1fr); gap: 18px; align-items: start; }
+.console { background: var(--panel); border-radius: 8px; padding: 14px 12px 12px; box-shadow: inset 0 0 0 1px var(--groove), 0 2px 0 var(--groove); }
+.groups { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 6px; }
+.group-name { font-size: 13px; font-weight: 700; color: var(--muted); padding: 0 4px 6px; border-bottom: 2px solid var(--groove); margin-bottom: 8px; }
+.strip { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 2px 6px; border-radius: 6px; cursor: default; position: relative; }
+.strip.sel { background: var(--panel-2); }
+.readout { font-size: 13px; font-weight: 700; font-stretch: 80%; text-align: center; min-height: 34px; line-height: 1.2; display: flex; align-items: center; color: var(--artist); }
+.strip.changed .readout::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); margin-left: 4px; flex: none; }
+.fader-wrap { position: relative; height: 190px; width: 44px; display: flex; justify-content: center; }
+.fader-wrap::before { content: ""; position: absolute; top: 9px; bottom: 9px; left: 50%; width: 4px; transform: translateX(-50%); background: var(--groove); border-radius: 2px; }
+.ticks { position: absolute; top: 9px; bottom: 9px; left: 4px; right: 4px; pointer-events: none; background: repeating-linear-gradient(to bottom, var(--groove) 0 1px, transparent 1px 10%); -webkit-mask: linear-gradient(to right, #000 0 7px, transparent 7px calc(100% - 7px), #000 calc(100% - 7px)); mask: linear-gradient(to right, #000 0 7px, transparent 7px calc(100% - 7px), #000 calc(100% - 7px)); opacity: .8; }
+input[type=range].fader { writing-mode: vertical-lr; direction: rtl; appearance: none; -webkit-appearance: none; width: 44px; height: 190px; margin: 0; background: transparent; cursor: grab; position: relative; z-index: 2; }
+input[type=range].fader::-webkit-slider-runnable-track { background: transparent; width: 44px; }
+input[type=range].fader::-moz-range-track { background: transparent; }
+input[type=range].fader::-webkit-slider-thumb { -webkit-appearance: none; width: 38px; height: 18px; border-radius: 3px; background: var(--cap); box-shadow: 0 2px 3px rgba(0,0,0,.4), inset 0 -4px 0 var(--artist), inset 0 0 0 1px rgba(0,0,0,.25); border: 0; }
+input[type=range].fader::-moz-range-thumb { width: 38px; height: 18px; border-radius: 3px; background: var(--cap); box-shadow: 0 2px 3px rgba(0,0,0,.4), inset 0 -4px 0 var(--artist), inset 0 0 0 1px rgba(0,0,0,.25); border: 0; }
+input[type=range].fader:disabled { cursor: not-allowed; opacity: .55; }
+.ghost { position: absolute; left: 50%; width: 44px; height: 4px; margin-left: -22px; background: var(--label); border-radius: 2px; z-index: 1; transform: translateY(50%); transition: bottom .35s ease; }
+.ghost::after { content: ""; position: absolute; right: -6px; top: -3px; border: 5px solid transparent; border-right-color: var(--label); transform: rotate(180deg); right: -10px; }
+.switch { display: flex; flex-direction: column; gap: 6px; height: 190px; justify-content: center; width: 100%; padding: 0 2px; }
+.switch button { border: 0; border-radius: 4px; padding: 8px 3px; font-size: 11.5px; font-stretch: 75%; overflow-wrap: normal; hyphens: auto; line-height: 1.15; font-weight: 600; background: var(--panel-2); color: var(--muted); cursor: pointer; box-shadow: inset 0 0 0 1px var(--groove); position: relative; }
+.switch button[aria-pressed=true] { background: var(--artist); color: #fff; box-shadow: none; }
+.switch button.theirs::before { content: ""; position: absolute; left: -2px; top: 6px; bottom: 6px; width: 4px; border-radius: 2px; background: var(--label); }
+.switch button:disabled { cursor: not-allowed; opacity: .6; }
+.scribble { background: var(--scribble); border-radius: 3px; width: 100%; padding: 5px 3px; text-align: center; font-size: 12px; font-weight: 700; font-stretch: 75%; line-height: 1.15; min-height: 38px; display: flex; align-items: center; justify-content: center; border: 0; cursor: pointer; box-shadow: inset 0 0 0 1px var(--groove); }
+.scribble:hover { box-shadow: inset 0 0 0 2px var(--artist); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px; color: var(--muted); padding: 10px 6px 0; }
+.legend span::before { content: ""; display: inline-block; width: 14px; height: 4px; border-radius: 2px; margin-right: 6px; vertical-align: middle; background: var(--c); }
+.inspector { margin-top: 12px; background: var(--panel-2); border-radius: 6px; padding: 14px 16px; display: grid; grid-template-columns: 220px 1fr; gap: 16px; }
+.inspector h3 { font-size: 20px; font-stretch: 80%; }
+.inspector .vals { font-size: 14px; color: var(--muted); margin-top: 6px; }
+.inspector .vals b { color: var(--ink); }
+.inspector p { margin: 0; font-family: var(--serif); font-size: 17px; line-height: 1.5; }
+.inspector .slide { font-family: var(--sans); font-size: 13px; color: var(--muted); margin-top: 6px; display: block; }
+
+.side { display: flex; flex-direction: column; gap: 14px; }
+.meters { background: var(--panel); border-radius: 8px; padding: 14px 16px; box-shadow: inset 0 0 0 1px var(--groove); display: grid; gap: 12px; }
+.meter-row { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; font-size: 14px; }
+.meter-row .num { font-weight: 700; font-variant-numeric: tabular-nums; }
+.bar { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(16, 1fr); gap: 3px; }
+.bar i { height: 12px; border-radius: 2px; background: var(--led-off); }
+.bar i.g { background: var(--led); }
+.bar i.a { background: var(--amber); }
+.bar i.r { background: var(--label); }
+.note { font-size: 13px; color: var(--muted); grid-column: 1 / -1; }
+.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.btn { border: 0; border-radius: 5px; padding: 12px 12px; font-weight: 700; cursor: pointer; background: var(--panel); box-shadow: inset 0 0 0 1px var(--groove); font-size: 15px; }
+.btn.primary { background: var(--artist); color: #fff; box-shadow: none; grid-column: 1 / -1; font-size: 17px; }
+.btn.accept { background: var(--led); color: #fff; box-shadow: none; }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.mail { background: var(--panel); border-radius: 8px; box-shadow: inset 0 0 0 1px var(--groove); max-height: 560px; overflow-y: auto; }
+.mail h3 { font-size: 15px; padding: 12px 16px; border-bottom: 1px solid var(--groove); position: sticky; top: 0; background: var(--panel); font-weight: 700; }
+.msg { padding: 14px 16px; border-bottom: 1px solid var(--groove); }
+.msg .from { font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; gap: 8px; }
+.msg .from b { color: var(--label); }
+.msg.you .from b { color: var(--artist); }
+.msg .text { font-family: var(--serif); font-size: 16.5px; line-height: 1.5; margin-top: 4px; }
+.msg .text p { margin: 0 0 8px; }
+.msg ul { margin: 4px 0 8px; padding-left: 18px; font-family: var(--sans); font-size: 14px; }
+.msg.fresh { background: color-mix(in srgb, var(--label) 7%, transparent); }
+
+/* ---------- Results ---------- */
+.result-head { display: grid; grid-template-columns: 1.3fr 1fr; gap: 24px; align-items: end; padding: 12px 0 20px; }
+.result-head h2 { font-size: clamp(36px, 5vw, 64px); font-stretch: 72%; font-weight: 800; line-height: .95; }
+.result-head p { font-family: var(--serif); font-size: 19px; margin: 10px 0 0; }
+.score { background: var(--panel); border-radius: 8px; padding: 16px; box-shadow: inset 0 0 0 1px var(--groove); }
+.score .big { font-size: 56px; font-weight: 800; font-stretch: 70%; line-height: 1; color: var(--artist); }
+.zopa { position: relative; height: 14px; border-radius: 7px; background: var(--panel-2); margin: 12px 0 6px; box-shadow: inset 0 0 0 1px var(--groove); }
+.zopa i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 7px; background: var(--artist); }
+.zopa-l { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+.cols { display: grid; grid-template-columns: 1.3fr 1fr; gap: 18px; align-items: start; }
+.card { background: var(--panel); border-radius: 8px; padding: 16px 18px; box-shadow: inset 0 0 0 1px var(--groove); }
+.card h3 { font-size: 20px; font-stretch: 85%; margin-bottom: 4px; }
+.card .sub { font-size: 14px; color: var(--muted); margin: 0 0 10px; }
+.tbl { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 15px; font-variant-numeric: tabular-nums; }
+th, td { text-align: right; padding: 8px 8px; border-bottom: 1px solid var(--groove); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+thead th { font-size: 13px; color: var(--muted); font-weight: 600; }
+td.neg { color: var(--label); font-weight: 700; }
+td.pos { color: var(--led); font-weight: 700; }
+.terms-list { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; font-size: 15px; margin: 0; }
+.terms-list dt { color: var(--muted); }
+.terms-list dd { margin: 0; font-weight: 600; text-align: right; }
+.terms-list dd.good { color: var(--led); }
+.terms-list dd.bad { color: var(--label); }
+.debrief { margin: 0; padding-left: 20px; font-family: var(--serif); font-size: 17px; line-height: 1.55; }
+.debrief li { margin-bottom: 10px; }
+.result-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.result-actions .btn { padding: 12px 18px; }
+.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--ink); color: var(--panel); padding: 10px 16px; border-radius: 6px; font-size: 14px; z-index: 10; }
+
+@media (max-width: 1080px) {
+  .desk { grid-template-columns: 1fr; }
+  .mail { max-height: 380px; }
+}
+@media (max-width: 860px) {
+  .intro-head, .result-head, .cols { grid-template-columns: 1fr; }
+  .mini-console { justify-content: flex-start; }
+  .clients, .how { grid-template-columns: 1fr; }
+  .teacher .body { grid-template-columns: 1fr; }
+  .groups { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  #groupHeads { display: none; }
+  .inspector { grid-template-columns: 1fr; gap: 8px; }
+}
+@media (max-width: 520px) {
+  .wrap { padding: 14px 12px 40px; }
+  .groups { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .fader-wrap, input[type=range].fader { height: 160px; }
+  .switch { height: 160px; }
+}
+
+/* ---------- two-team additions ---------- */
+.home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.panel { background: var(--panel); border-radius: 8px; padding: 20px; box-shadow: inset 0 0 0 1px var(--groove); }
+.panel h3 { font-size: 22px; font-stretch: 85%; margin-bottom: 6px; }
+.panel p.sub { margin: 0 0 14px; color: var(--muted); font-size: 15px; }
+.field { display: grid; gap: 6px; margin-bottom: 14px; }
+.field > span { font-size: 14px; font-weight: 600; }
+.field input[type=text], .field textarea, .field select { font: inherit; font-size: 16px; padding: 10px 12px; border-radius: 5px; border: 1px solid var(--groove); background: var(--scribble); color: var(--ink); width: 100%; }
+.seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.seg button { border: 0; border-radius: 5px; padding: 9px 12px; font-size: 15px; font-weight: 600; background: var(--panel-2); box-shadow: inset 0 0 0 1px var(--groove); cursor: pointer; }
+.seg button[aria-pressed=true] { background: var(--artist); color: #fff; box-shadow: none; }
+.seg button.label-side[aria-pressed=true] { background: var(--label); }
+.code-input { text-transform: uppercase; letter-spacing: .2em; font-weight: 700; }
+.errline { color: var(--label); font-size: 14px; min-height: 20px; margin: 0; }
+.notice { background: var(--panel-2); border-radius: 6px; padding: 12px 14px; font-size: 15px; margin-bottom: 16px; }
+.side-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+.lobby { max-width: 640px; margin: 40px auto; text-align: center; }
+.lobby .bigcode { font-size: clamp(64px, 14vw, 120px); font-weight: 800; font-stretch: 70%; letter-spacing: .08em; line-height: 1; margin: 12px 0; color: var(--artist); }
+.lobby p { font-family: var(--serif); font-size: 19px; }
+.teams { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 20px 0; text-align: left; }
+.team { background: var(--panel); border-radius: 6px; padding: 12px 14px; box-shadow: inset 0 0 0 1px var(--groove); }
+.team .role { font-size: 13px; font-weight: 700; }
+.team.artist .role { color: var(--artist); }
+.team.label .role { color: var(--label); }
+.team .tname { font-size: 20px; font-weight: 700; font-stretch: 85%; }
+.team .tname.empty { color: var(--muted); font-weight: 500; }
+.turnbanner { border-radius: 6px; padding: 10px 14px; font-weight: 700; font-size: 16px; margin-bottom: 12px; }
+.turnbanner.mine { background: var(--led); color: #fff; }
+.turnbanner.wait { background: var(--panel-2); color: var(--muted); box-shadow: inset 0 0 0 1px var(--groove); }
+.turnbanner.final { background: var(--amber); color: #1d1d1d; }
+.sidebadge { display: inline-block; padding: 3px 9px; border-radius: 4px; font-size: 13px; font-weight: 700; color: #fff; vertical-align: middle; margin-left: 8px; }
+.sidebadge.artist { background: var(--artist); }
+.sidebadge.label { background: var(--label); }
+.meter-scale { grid-column: 1 / -1; position: relative; height: 16px; border-radius: 4px; background: var(--panel-2); box-shadow: inset 0 0 0 1px var(--groove); overflow: hidden; }
+.meter-scale .fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--led); transition: width .2s ease; }
+.meter-scale .fill.below { background: var(--label); }
+.meter-scale .walk { position: absolute; top: -2px; bottom: -2px; width: 3px; background: var(--ink); }
+.note-box textarea { min-height: 70px; resize: vertical; }
+.msg.label-msg .from b { color: var(--label); }
+.msg.artist-msg .from b { color: var(--artist); }
+.msg .quote { font-style: italic; }
+.msg.sys { font-family: var(--sans); font-size: 14px; color: var(--muted); }
+dialog { border: 0; border-radius: 10px; padding: 0; max-width: 640px; width: calc(100% - 32px); background: var(--panel); color: var(--ink); box-shadow: 0 20px 60px rgba(0,0,0,.35); }
+dialog::backdrop { background: rgba(20, 26, 30, .55); }
+.dlg-body { padding: 22px 24px; max-height: 75vh; overflow-y: auto; }
+.dlg-body h3 { font-size: 24px; font-stretch: 80%; margin-bottom: 4px; }
+.dlg-body .conf { font-size: 13px; font-weight: 700; color: var(--label); margin-bottom: 12px; }
+.dlg-body p, .dlg-body li { font-family: var(--serif); font-size: 17px; line-height: 1.5; }
+.dlg-body ol, .dlg-body ul { padding-left: 20px; }
+.dlg-body .walkval { font-family: var(--sans); background: var(--panel-2); border-radius: 6px; padding: 10px 12px; font-size: 15px; }
+.dlg-foot { padding: 12px 24px 18px; display: flex; justify-content: flex-end; gap: 8px; }
+.handoff { position: fixed; inset: 0; background: var(--page); z-index: 20; display: flex; align-items: center; justify-content: center; padding: 24px; padding-top: calc(24px + env(safe-area-inset-top, 0px)); }
+.handoff .inner { max-width: 520px; text-align: center; }
+.handoff h2 { font-size: clamp(36px, 7vw, 60px); font-stretch: 72%; font-weight: 800; line-height: 1; margin-bottom: 12px; }
+.handoff p { font-family: var(--serif); font-size: 19px; }
+.scores { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.scorebox { background: var(--panel); border-radius: 8px; padding: 14px 16px; box-shadow: inset 0 0 0 1px var(--groove); }
+.scorebox .big { font-size: 48px; font-weight: 800; font-stretch: 70%; line-height: 1; }
+.scorebox.artist .big { color: var(--artist); }
+.scorebox.label .big { color: var(--label); }
+.scorebox .who { font-size: 14px; font-weight: 700; }
+.scorebox .expl { font-size: 13px; color: var(--muted); margin-top: 4px; }
+.board table td, .board table th { text-align: left; }
+.board .st-closed { color: var(--led); font-weight: 700; }
+.board .st-nodeal { color: var(--label); font-weight: 700; }
+.board .st-live { color: var(--amber); font-weight: 700; }
+.rowbtn { background: none; border: 0; color: var(--artist); text-decoration: underline; cursor: pointer; padding: 0; font-size: 14px; }
+.connpill { position: fixed; right: 14px; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); z-index: 15; padding: 7px 12px 7px 26px; border-radius: 20px; font-size: 13px; font-weight: 600; background: var(--panel); box-shadow: 0 2px 10px rgba(0,0,0,.18), inset 0 0 0 1px var(--groove); max-width: calc(100% - 28px); }
+.connpill::before { content: ""; position: absolute; left: 11px; top: 50%; width: 8px; height: 8px; margin-top: -4px; border-radius: 50%; background: var(--amber); }
+.connpill.ok::before { background: var(--led); }
+.connpill.bad::before { background: var(--label); }
+@media (max-width: 860px) {
+  .home-grid, .teams, .scores { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ===================== HOME ===================== -->
+<section id="home">
+  <div class="intro-head">
+    <div><h1>The Deal<br>Desk</h1></div>
+    <div>
+      <div class="mini-console" aria-hidden="true">
+        <span style="--h:70%;--d:.05s"></span><span style="--h:42%;--d:.1s;--c:var(--label)"></span><span style="--h:80%;--d:.15s"></span><span style="--h:28%;--d:.2s;--c:var(--label)"></span><span style="--h:55%;--d:.25s"></span><span style="--h:63%;--d:.3s;--c:var(--label)"></span><span style="--h:36%;--d:.35s"></span><span style="--h:74%;--d:.4s;--c:var(--label)"></span>
+      </div>
+    </div>
+  </div>
+  <p style="font-family:var(--serif);font-size:21px;line-height:1.5;max-width:42em;margin:0 0 24px">Two teams, one record deal. One team represents the artist. The other is business affairs at 480 Collective, the label making the offer. Each team gets a confidential brief, and you trade offers on a mixing console until you close — or someone walks.</p>
+
+  <div id="onlineNotice" class="notice hidden"></div>
+  <div id="resumeBox" class="panel hidden" style="margin-bottom:16px"><h3>Pick up where you left off</h3><div class="side-row" id="resumeBtns" style="margin-top:8px;align-items:center"></div></div>
+
+  <div class="home-grid" id="onlinePanels">
+    <div class="panel">
+      <h3>Start a game</h3>
+      <p class="sub">You’ll get a four-letter code to give the other team.</p>
+      <div class="field"><span>Your team name</span><input type="text" id="newTeam" maxlength="40" autocomplete="off" placeholder="e.g. Table 3"></div>
+      <div class="field"><span>Your client</span><div class="seg" id="newClient"></div></div>
+      <div class="field"><span>Your side</span><div class="seg" id="newSide">
+        <button type="button" data-v="artist" aria-pressed="true">The artist’s team</button>
+        <button type="button" data-v="label" class="label-side" aria-pressed="false">480 Collective</button>
+      </div></div>
+      <div class="field"><span>Class code (optional — if your instructor gave you one)</span><input type="text" id="newClass" class="code-input" maxlength="5" autocomplete="off" placeholder="ABCDE"></div>
+      <p class="errline" id="newErr"></p>
+      <button class="btn primary" type="button" id="createBtn" style="width:100%">Start game</button>
+      <p class="sub" style="margin:10px 0 0">Your browser hosts the game, so keep this page open until the deal is done.</p>
+    </div>
+    <div class="panel">
+      <h3>Join a game</h3>
+      <p class="sub">Enter the code the other team gave you. You’ll take the open side.</p>
+      <div class="field"><span>Game code</span><input type="text" id="joinCode" class="code-input" maxlength="4" autocomplete="off" placeholder="ABCD"></div>
+      <div class="field"><span>Your team name</span><input type="text" id="joinTeam" maxlength="40" autocomplete="off" placeholder="e.g. Table 4"></div>
+      <p class="errline" id="joinErr"></p>
+      <button class="btn primary" type="button" id="joinBtn" style="width:100%">Join game</button>
+
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:16px">
+    <h3>Play on one screen</h3>
+    <p class="sub">Both teams share one device and pass it back and forth between turns. Nothing is saved.</p>
+    <div class="field"><span>Client</span><div class="seg" id="localClient"></div></div>
+    <button class="btn" type="button" id="localBtn">Start a one-screen game</button>
+  </div>
+
+  <div class="panel" style="margin-top:16px">
+    <h3>Instructors: class dashboard</h3>
+    <p class="sub">Open the dashboard on your computer and give students the five-letter class code. Games started with that code report their results here live. Results are saved in this browser and can be exported as a spreadsheet.</p>
+    <button class="btn" type="button" id="dashBtn">Open class dashboard</button>
+  </div>
+
+  <h2 class="section-title">The clients</h2>
+  <div class="clients" id="clients"></div>
+
+  <details class="teacher">
+    <summary>Instructor notes</summary>
+    <div class="body">
+      <div>
+        <h4>Setup</h4>
+        <ol>
+          <li>Put this one file anywhere students can open it in a browser: your course site or LMS, GitHub Pages, Netlify, or a shared drive. No account or server is needed.</li>
+          <li>Open the class dashboard on your computer and project or share the five-letter class code.</li>
+          <li>Pair teams of 2–4, one device per team. One team starts a game (entering the class code) and reads its four-letter game code to the other team.</li>
+          <li>Run all pairs with the same client first (Hollis is a good warm-up), then switch sides and clients.</li>
+          <li>If a campus network blocks direct connections, use one-screen mode: teams pass a laptop between turns.</li>
+        </ol>
+        <h4>Rules of play</h4>
+        <ul>
+          <li>480 Collective makes the opening offer. The teams then alternate offers, and each offer can include a short note.</li>
+          <li>Either side can accept the other side’s offer on its turn, or walk away at any time.</li>
+          <li>After the artist team’s sixth offer, the label’s response is final: the artist must accept or walk.</li>
+          <li>Each team sees only its own value meter and walk-away point. Briefs are confidential — no showing screens.</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Debrief</h4>
+        <ul>
+          <li>Open the class dashboard and compare deals for the same client. Why did outcomes differ so much?</li>
+          <li>Which terms were cheap for the label to give but valuable to the artist? Did teams find those trades?</li>
+          <li>Did anyone bluff about a competing offer? How did the label team decide whether to believe it?</li>
+          <li>Find a deal where the artist is unrecouped in the “expected” case while the label is profitable. Walk the class through why.</li>
+          <li>Did any pair fail to close even though a deal was possible? What got in the way?</li>
+        </ul>
+        <h4>Scoring</h4>
+        <p style="margin:0">Each team’s score is the share of the available surplus it captured: how far above its own walk-away point the final deal landed, compared with the best deal the other side would have signed. Walking away scores 0. The numbers are illustrative, based on a simplified model of royalties, recoupment, 360 income and catalog value across flop, expected and breakout outcomes.</p>
+      </div>
+    </div>
+  </details>
+</section>
+
+<!-- ===================== LOBBY ===================== -->
+<section id="lobby" class="hidden">
+  <div class="lobby">
+    <div style="font-weight:700;color:var(--muted)">Game code</div>
+    <div class="bigcode" id="lobbyCode"></div>
+    <p id="lobbyText"></p>
+    <div class="teams" id="lobbyTeams"></div>
+    <button class="linkbtn" type="button" id="lobbyLeave">Leave game</button>
+  </div>
+</section>
+
+<!-- ===================== PLAY ===================== -->
+<section id="play" class="hidden">
+  <div class="topbar">
+    <div>
+      <h2><span id="clientName"></span><span id="sideBadge" class="sidebadge"></span></h2>
+      <div class="who" id="matchup"></div>
+    </div>
+    <div class="status">
+      <div>Artist offers <b id="roundNum">0</b> of 6</div>
+      <button class="btn" type="button" id="briefBtn" style="padding:8px 12px">Confidential brief</button>
+      <button class="linkbtn" type="button" id="leaveBtn">Leave</button>
+    </div>
+  </div>
+
+  <div class="desk">
+    <div>
+      <div class="turnbanner" id="turnBanner"></div>
+      <div class="console">
+        <div class="groups" id="groupHeads"></div>
+        <div class="groups" id="strips"></div>
+        <div class="legend">
+          <span style="--c:var(--artist)">Your terms</span>
+          <span style="--c:var(--label)" id="legendTheirs">Their last offer</span>
+          <span style="--c:var(--amber)">Different from their last offer</span>
+        </div>
+      </div>
+      <div class="inspector" id="inspector" aria-live="polite"></div>
+    </div>
+
+    <div class="side">
+      <div class="meters" id="meterBox">
+        <div class="meter-row">
+          <span id="meterLabel">Value to your side</span><span class="num" id="meterNum"></span>
+          <div class="meter-scale"><div class="fill" id="meterFill"></div><div class="walk" id="meterWalk" title="Your walk-away point"></div></div>
+          <span class="note" id="meterNote"></span>
+        </div>
+      </div>
+      <div class="field note-box" style="margin:0"><span>Note to the other side (optional)</span><textarea id="noteInput" maxlength="400" placeholder="Explain your offer, make a case, or mention another offer…"></textarea></div>
+      <div class="actions">
+        <button class="btn primary" id="sendBtn" type="button">Send offer</button>
+        <button class="btn accept" id="acceptBtn" type="button">Accept their offer</button>
+        <button class="btn" id="resetBtn" type="button">Reset to their offer</button>
+        <button class="btn" id="walkBtn" type="button" style="grid-column:1 / -1">Walk away</button>
+      </div>
+      <div class="mail">
+        <h3>Correspondence</h3>
+        <div id="mail"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== RESULTS ===================== -->
+<section id="results" class="hidden"></section>
+
+<!-- ===================== BOARD ===================== -->
+<section id="board" class="hidden board">
+  <div class="topbar">
+    <div><h2>Class dashboard</h2><div class="who" id="boardStatus">Connecting…</div></div>
+    <button class="linkbtn" type="button" id="boardBack">Back</button>
+  </div>
+  <div class="panel" style="margin-bottom:16px;display:flex;flex-wrap:wrap;gap:16px 32px;align-items:center;justify-content:space-between">
+    <div><div style="font-weight:700;color:var(--muted)">Class code — students enter this when they start a game</div><div class="bigcode" id="classCode" style="font-size:64px;font-weight:800;font-stretch:70%;letter-spacing:.08em;color:var(--artist);line-height:1.05"></div></div>
+    <div class="side-row" style="margin:0"><button class="btn" type="button" id="csvBtn">Export results (CSV)</button><button class="btn" type="button" id="newClassBtn">New class code</button><button class="btn" type="button" id="clearBtn">Clear results</button></div>
+  </div>
+  <div class="card"><div class="tbl" id="boardTable"><p>Loading…</p></div></div>
+</section>
+
+</div>
+
+<dialog id="briefDlg" aria-labelledby="briefTitle">
+  <div class="dlg-body" id="briefBody"></div>
+  <div class="dlg-foot"><button class="btn primary" type="button" id="briefClose" style="grid-column:auto">Close brief</button></div>
+</dialog>
+
+<div class="handoff hidden" id="handoff">
+  <div class="inner">
+    <h2 id="handoffTitle"></h2>
+    <p id="handoffText"></p>
+    <button class="btn primary" type="button" id="handoffBtn" style="padding:14px 22px"></button>
+  </div>
+</div>
+
+<div class="connpill hidden" id="connPill" role="status"></div>
+<div class="toast hidden" id="toast" role="status"></div>
+
+<script>/* PeerJS 1.5.5 — MIT License — https://peerjs.com */
+(()=>{function e(e,t,n,r){Object.defineProperty(e,t,{get:n,set:r,enumerable:!0,configurable:!0})}function t(e){return e&&e.__esModule?e.default:e}class n{constructor(){this.chunkedMTU=16300,this._dataCount=1,this.chunk=e=>{let t=[],n=e.byteLength,r=Math.ceil(n/this.chunkedMTU),i=0,s=0;for(;s<n;){let o=Math.min(n,s+this.chunkedMTU),a=e.slice(s,o),c={__peerData:this._dataCount,n:i,data:a,total:r};t.push(c),s=o,i++}return this._dataCount++,t}}}class r{append_buffer(e){this.flush(),this._parts.push(e)}append(e){this._pieces.push(e)}flush(){if(this._pieces.length>0){let e=new Uint8Array(this._pieces);this._parts.push(e),this._pieces=[]}}toArrayBuffer(){let e=[];for(let t of this._parts)e.push(t);return function(e){let t=0;for(let n of e)t+=n.byteLength;let n=new Uint8Array(t),r=0;for(let t of e){let e=new Uint8Array(t.buffer,t.byteOffset,t.byteLength);n.set(e,r),r+=t.byteLength}return n}(e).buffer}constructor(){this.encoder=new TextEncoder,this._pieces=[],this._parts=[]}}function i(e){return new o(e).unpack()}function s(e){let t=new a,n=t.pack(e);return n instanceof Promise?n.then(()=>t.getBuffer()):t.getBuffer()}class o{unpack(){let e,t=this.unpack_uint8();if(t<128)return t;if((224^t)<32)return(224^t)-32;if((e=160^t)<=15)return this.unpack_raw(e);if((e=176^t)<=15)return this.unpack_string(e);if((e=144^t)<=15)return this.unpack_array(e);if((e=128^t)<=15)return this.unpack_map(e);switch(t){case 192:return null;case 193:case 212:case 213:case 214:case 215:return;case 194:return!1;case 195:return!0;case 202:return this.unpack_float();case 203:return this.unpack_double();case 204:return this.unpack_uint8();case 205:return this.unpack_uint16();case 206:return this.unpack_uint32();case 207:return this.unpack_uint64();case 208:return this.unpack_int8();case 209:return this.unpack_int16();case 210:return this.unpack_int32();case 211:return this.unpack_int64();case 216:return e=this.unpack_uint16(),this.unpack_string(e);case 217:return e=this.unpack_uint32(),this.unpack_string(e);case 218:return e=this.unpack_uint16(),this.unpack_raw(e);case 219:return e=this.unpack_uint32(),this.unpack_raw(e);case 220:return e=this.unpack_uint16(),this.unpack_array(e);case 221:return e=this.unpack_uint32(),this.unpack_array(e);case 222:return e=this.unpack_uint16(),this.unpack_map(e);case 223:return e=this.unpack_uint32(),this.unpack_map(e)}}unpack_uint8(){let e=255&this.dataView[this.index];return this.index++,e}unpack_uint16(){let e=this.read(2),t=(255&e[0])*256+(255&e[1]);return this.index+=2,t}unpack_uint32(){let e=this.read(4),t=((256*e[0]+e[1])*256+e[2])*256+e[3];return this.index+=4,t}unpack_uint64(){let e=this.read(8),t=((((((256*e[0]+e[1])*256+e[2])*256+e[3])*256+e[4])*256+e[5])*256+e[6])*256+e[7];return this.index+=8,t}unpack_int8(){let e=this.unpack_uint8();return e<128?e:e-256}unpack_int16(){let e=this.unpack_uint16();return e<32768?e:e-65536}unpack_int32(){let e=this.unpack_uint32();return e<0x80000000?e:e-0x100000000}unpack_int64(){let e=this.unpack_uint64();return e<0x8000000000000000?e:e-0xffffffffffffffff}unpack_raw(e){if(this.length<this.index+e)throw Error(`BinaryPackFailure: index is out of range ${this.index} ${e} ${this.length}`);let t=this.dataBuffer.slice(this.index,this.index+e);return this.index+=e,t}unpack_string(e){let t,n,r=this.read(e),i=0,s="";for(;i<e;)(t=r[i])<160?(n=t,i++):(192^t)<32?(n=(31&t)<<6|63&r[i+1],i+=2):(224^t)<16?(n=(15&t)<<12|(63&r[i+1])<<6|63&r[i+2],i+=3):(n=(7&t)<<18|(63&r[i+1])<<12|(63&r[i+2])<<6|63&r[i+3],i+=4),s+=String.fromCodePoint(n);return this.index+=e,s}unpack_array(e){let t=Array(e);for(let n=0;n<e;n++)t[n]=this.unpack();return t}unpack_map(e){let t={};for(let n=0;n<e;n++)t[this.unpack()]=this.unpack();return t}unpack_float(){let e=this.unpack_uint32();return(0==e>>31?1:-1)*(8388607&e|8388608)*2**((e>>23&255)-127-23)}unpack_double(){let e=this.unpack_uint32(),t=this.unpack_uint32(),n=(e>>20&2047)-1023;return(0==e>>31?1:-1)*((1048575&e|1048576)*2**(n-20)+t*2**(n-52))}read(e){let t=this.index;if(t+e<=this.length)return this.dataView.subarray(t,t+e);throw Error("BinaryPackFailure: read index out of range")}constructor(e){this.index=0,this.dataBuffer=e,this.dataView=new Uint8Array(this.dataBuffer),this.length=this.dataBuffer.byteLength}}class a{getBuffer(){return this._bufferBuilder.toArrayBuffer()}pack(e){if("string"==typeof e)this.pack_string(e);else if("number"==typeof e)Math.floor(e)===e?this.pack_integer(e):this.pack_double(e);else if("boolean"==typeof e)!0===e?this._bufferBuilder.append(195):!1===e&&this._bufferBuilder.append(194);else if(void 0===e)this._bufferBuilder.append(192);else if("object"==typeof e)if(null===e)this._bufferBuilder.append(192);else{let t=e.constructor;if(e instanceof Array){let t=this.pack_array(e);if(t instanceof Promise)return t.then(()=>this._bufferBuilder.flush())}else if(e instanceof ArrayBuffer)this.pack_bin(new Uint8Array(e));else if("BYTES_PER_ELEMENT"in e)this.pack_bin(new Uint8Array(e.buffer,e.byteOffset,e.byteLength));else if(e instanceof Date)this.pack_string(e.toString());else if(e instanceof Blob)return e.arrayBuffer().then(e=>{this.pack_bin(new Uint8Array(e)),this._bufferBuilder.flush()});else if(t==Object||t.toString().startsWith("class")){let t=this.pack_object(e);if(t instanceof Promise)return t.then(()=>this._bufferBuilder.flush())}else throw Error(`Type "${t.toString()}" not yet supported`)}else throw Error(`Type "${typeof e}" not yet supported`);this._bufferBuilder.flush()}pack_bin(e){let t=e.length;if(t<=15)this.pack_uint8(160+t);else if(t<=65535)this._bufferBuilder.append(218),this.pack_uint16(t);else if(t<=0xffffffff)this._bufferBuilder.append(219),this.pack_uint32(t);else throw Error("Invalid length");this._bufferBuilder.append_buffer(e)}pack_string(e){let t=this._textEncoder.encode(e),n=t.length;if(n<=15)this.pack_uint8(176+n);else if(n<=65535)this._bufferBuilder.append(216),this.pack_uint16(n);else if(n<=0xffffffff)this._bufferBuilder.append(217),this.pack_uint32(n);else throw Error("Invalid length");this._bufferBuilder.append_buffer(t)}pack_array(e){let t=e.length;if(t<=15)this.pack_uint8(144+t);else if(t<=65535)this._bufferBuilder.append(220),this.pack_uint16(t);else if(t<=0xffffffff)this._bufferBuilder.append(221),this.pack_uint32(t);else throw Error("Invalid length");let n=r=>{if(r<t){let t=this.pack(e[r]);return t instanceof Promise?t.then(()=>n(r+1)):n(r+1)}};return n(0)}pack_integer(e){if(e>=-32&&e<=127)this._bufferBuilder.append(255&e);else if(e>=0&&e<=255)this._bufferBuilder.append(204),this.pack_uint8(e);else if(e>=-128&&e<=127)this._bufferBuilder.append(208),this.pack_int8(e);else if(e>=0&&e<=65535)this._bufferBuilder.append(205),this.pack_uint16(e);else if(e>=-32768&&e<=32767)this._bufferBuilder.append(209),this.pack_int16(e);else if(e>=0&&e<=0xffffffff)this._bufferBuilder.append(206),this.pack_uint32(e);else if(e>=-0x80000000&&e<=0x7fffffff)this._bufferBuilder.append(210),this.pack_int32(e);else if(e>=-0x8000000000000000&&e<=0x8000000000000000)this._bufferBuilder.append(211),this.pack_int64(e);else if(e>=0&&e<=0xffffffffffffffff)this._bufferBuilder.append(207),this.pack_uint64(e);else throw Error("Invalid integer")}pack_double(e){let t=0;e<0&&(t=1,e=-e);let n=Math.floor(Math.log(e)/Math.LN2),r=Math.floor((e/2**n-1)*0x10000000000000),i=t<<31|n+1023<<20|r/0x100000000&1048575;this._bufferBuilder.append(203),this.pack_int32(i),this.pack_int32(r%0x100000000)}pack_object(e){let t=Object.keys(e),n=t.length;if(n<=15)this.pack_uint8(128+n);else if(n<=65535)this._bufferBuilder.append(222),this.pack_uint16(n);else if(n<=0xffffffff)this._bufferBuilder.append(223),this.pack_uint32(n);else throw Error("Invalid length");let r=n=>{if(n<t.length){let i=t[n];if(e.hasOwnProperty(i)){this.pack(i);let t=this.pack(e[i]);if(t instanceof Promise)return t.then(()=>r(n+1))}return r(n+1)}};return r(0)}pack_uint8(e){this._bufferBuilder.append(e)}pack_uint16(e){this._bufferBuilder.append(e>>8),this._bufferBuilder.append(255&e)}pack_uint32(e){let t=0|e;this._bufferBuilder.append((0xff000000&t)>>>24),this._bufferBuilder.append((0xff0000&t)>>>16),this._bufferBuilder.append((65280&t)>>>8),this._bufferBuilder.append(255&t)}pack_uint64(e){let t=e/0x100000000,n=e%0x100000000;this._bufferBuilder.append((0xff000000&t)>>>24),this._bufferBuilder.append((0xff0000&t)>>>16),this._bufferBuilder.append((65280&t)>>>8),this._bufferBuilder.append(255&t),this._bufferBuilder.append((0xff000000&n)>>>24),this._bufferBuilder.append((0xff0000&n)>>>16),this._bufferBuilder.append((65280&n)>>>8),this._bufferBuilder.append(255&n)}pack_int8(e){this._bufferBuilder.append(255&e)}pack_int16(e){this._bufferBuilder.append((65280&e)>>8),this._bufferBuilder.append(255&e)}pack_int32(e){this._bufferBuilder.append(e>>>24&255),this._bufferBuilder.append((0xff0000&e)>>>16),this._bufferBuilder.append((65280&e)>>>8),this._bufferBuilder.append(255&e)}pack_int64(e){let t=Math.floor(e/0x100000000),n=e%0x100000000;this._bufferBuilder.append((0xff000000&t)>>>24),this._bufferBuilder.append((0xff0000&t)>>>16),this._bufferBuilder.append((65280&t)>>>8),this._bufferBuilder.append(255&t),this._bufferBuilder.append((0xff000000&n)>>>24),this._bufferBuilder.append((0xff0000&n)>>>16),this._bufferBuilder.append((65280&n)>>>8),this._bufferBuilder.append(255&n)}constructor(){this._bufferBuilder=new r,this._textEncoder=new TextEncoder}}"use strict";let c=!0,p=!0;function d(e,t,n){let r=e.match(t);return r&&r.length>=n&&parseInt(r[n],10)}function l(e,t,n){if(!e.RTCPeerConnection)return;let r=e.RTCPeerConnection.prototype,i=r.addEventListener;r.addEventListener=function(e,r){if(e!==t)return i.apply(this,arguments);let s=e=>{let t=n(e);t&&(r.handleEvent?r.handleEvent(t):r(t))};return this._eventMap=this._eventMap||{},this._eventMap[t]||(this._eventMap[t]=new Map),this._eventMap[t].set(r,s),i.apply(this,[e,s])};let s=r.removeEventListener;r.removeEventListener=function(e,n){if(e!==t||!this._eventMap||!this._eventMap[t]||!this._eventMap[t].has(n))return s.apply(this,arguments);let r=this._eventMap[t].get(n);return this._eventMap[t].delete(n),0===this._eventMap[t].size&&delete this._eventMap[t],0===Object.keys(this._eventMap).length&&delete this._eventMap,s.apply(this,[e,r])},Object.defineProperty(r,"on"+t,{get(){return this["_on"+t]},set(e){this["_on"+t]&&(this.removeEventListener(t,this["_on"+t]),delete this["_on"+t]),e&&this.addEventListener(t,this["_on"+t]=e)},enumerable:!0,configurable:!0})}function h(e){return"boolean"!=typeof e?Error("Argument type: "+typeof e+". Please use a boolean."):(c=e,e?"adapter.js logging disabled":"adapter.js logging enabled")}function u(e){return"boolean"!=typeof e?Error("Argument type: "+typeof e+". Please use a boolean."):(p=!e,"adapter.js deprecation warnings "+(e?"disabled":"enabled"))}function f(){"object"==typeof window&&(c||"undefined"!=typeof console&&"function"==typeof console.log&&console.log.apply(console,arguments))}function m(e,t){p&&console.warn(e+" is deprecated, please use "+t+" instead.")}function _(e){return"[object Object]"===Object.prototype.toString.call(e)}function g(e,t,n){let r=n?"outbound-rtp":"inbound-rtp",i=new Map;if(null===t)return i;let s=[];return e.forEach(e=>{"track"===e.type&&e.trackIdentifier===t.id&&s.push(e)}),s.forEach(t=>{e.forEach(n=>{n.type===r&&n.trackId===t.id&&function e(t,n,r){!n||r.has(n.id)||(r.set(n.id,n),Object.keys(n).forEach(i=>{i.endsWith("Id")?e(t,t.get(n[i]),r):i.endsWith("Ids")&&n[i].forEach(n=>{e(t,t.get(n),r)})}))}(e,n,i)})}),i}"use strict";var y={};function C(e,t){let n=e&&e.navigator;if(!n.mediaDevices)return;let r=function(e){if("object"!=typeof e||e.mandatory||e.optional)return e;let t={};return Object.keys(e).forEach(n=>{if("require"===n||"advanced"===n||"mediaSource"===n)return;let r="object"==typeof e[n]?e[n]:{ideal:e[n]};void 0!==r.exact&&"number"==typeof r.exact&&(r.min=r.max=r.exact);let i=function(e,t){return e?e+t.charAt(0).toUpperCase()+t.slice(1):"deviceId"===t?"sourceId":t};if(void 0!==r.ideal){t.optional=t.optional||[];let e={};"number"==typeof r.ideal?(e[i("min",n)]=r.ideal,t.optional.push(e),(e={})[i("max",n)]=r.ideal):e[i("",n)]=r.ideal,t.optional.push(e)}void 0!==r.exact&&"number"!=typeof r.exact?(t.mandatory=t.mandatory||{},t.mandatory[i("",n)]=r.exact):["min","max"].forEach(e=>{void 0!==r[e]&&(t.mandatory=t.mandatory||{},t.mandatory[i(e,n)]=r[e])})}),e.advanced&&(t.optional=(t.optional||[]).concat(e.advanced)),t},i=function(e,i){if(t.version>=61)return i(e);if((e=JSON.parse(JSON.stringify(e)))&&"object"==typeof e.audio){let t=function(e,t,n){t in e&&!(n in e)&&(e[n]=e[t],delete e[t])};t((e=JSON.parse(JSON.stringify(e))).audio,"autoGainControl","googAutoGainControl"),t(e.audio,"noiseSuppression","googNoiseSuppression"),e.audio=r(e.audio)}if(e&&"object"==typeof e.video){let s=e.video.facingMode;s=s&&("object"==typeof s?s:{ideal:s});let o=t.version<66;if(s&&("user"===s.exact||"environment"===s.exact||"user"===s.ideal||"environment"===s.ideal)&&!(n.mediaDevices.getSupportedConstraints&&n.mediaDevices.getSupportedConstraints().facingMode&&!o)){let t;if(delete e.video.facingMode,"environment"===s.exact||"environment"===s.ideal?t=["back","rear"]:("user"===s.exact||"user"===s.ideal)&&(t=["front"]),t)return n.mediaDevices.enumerateDevices().then(n=>{let o=(n=n.filter(e=>"videoinput"===e.kind)).find(e=>t.some(t=>e.label.toLowerCase().includes(t)));return!o&&n.length&&t.includes("back")&&(o=n[n.length-1]),o&&(e.video.deviceId=s.exact?{exact:o.deviceId}:{ideal:o.deviceId}),e.video=r(e.video),f("chrome: "+JSON.stringify(e)),i(e)})}e.video=r(e.video)}return f("chrome: "+JSON.stringify(e)),i(e)},s=function(e){return t.version>=64?e:{name:({PermissionDeniedError:"NotAllowedError",PermissionDismissedError:"NotAllowedError",InvalidStateError:"NotAllowedError",DevicesNotFoundError:"NotFoundError",ConstraintNotSatisfiedError:"OverconstrainedError",TrackStartError:"NotReadableError",MediaDeviceFailedDueToShutdown:"NotAllowedError",MediaDeviceKillSwitchOn:"NotAllowedError",TabCaptureError:"AbortError",ScreenCaptureError:"AbortError",DeviceCaptureError:"AbortError"})[e.name]||e.name,message:e.message,constraint:e.constraint||e.constraintName,toString(){return this.name+(this.message&&": ")+this.message}}};if(n.getUserMedia=(function(e,t,r){i(e,e=>{n.webkitGetUserMedia(e,t,e=>{r&&r(s(e))})})}).bind(n),n.mediaDevices.getUserMedia){let e=n.mediaDevices.getUserMedia.bind(n.mediaDevices);n.mediaDevices.getUserMedia=function(t){return i(t,t=>e(t).then(e=>{if(t.audio&&!e.getAudioTracks().length||t.video&&!e.getVideoTracks().length)throw e.getTracks().forEach(e=>{e.stop()}),new DOMException("","NotFoundError");return e},e=>Promise.reject(s(e))))}}}"use strict";function v(e){e.MediaStream=e.MediaStream||e.webkitMediaStream}function b(e){if("object"!=typeof e||!e.RTCPeerConnection||"ontrack"in e.RTCPeerConnection.prototype)l(e,"track",e=>(e.transceiver||Object.defineProperty(e,"transceiver",{value:{receiver:e.receiver}}),e));else{Object.defineProperty(e.RTCPeerConnection.prototype,"ontrack",{get(){return this._ontrack},set(e){this._ontrack&&this.removeEventListener("track",this._ontrack),this.addEventListener("track",this._ontrack=e)},enumerable:!0,configurable:!0});let t=e.RTCPeerConnection.prototype.setRemoteDescription;e.RTCPeerConnection.prototype.setRemoteDescription=function(){return this._ontrackpoly||(this._ontrackpoly=t=>{t.stream.addEventListener("addtrack",n=>{let r;r=e.RTCPeerConnection.prototype.getReceivers?this.getReceivers().find(e=>e.track&&e.track.id===n.track.id):{track:n.track};let i=new Event("track");i.track=n.track,i.receiver=r,i.transceiver={receiver:r},i.streams=[t.stream],this.dispatchEvent(i)}),t.stream.getTracks().forEach(n=>{let r;r=e.RTCPeerConnection.prototype.getReceivers?this.getReceivers().find(e=>e.track&&e.track.id===n.id):{track:n};let i=new Event("track");i.track=n,i.receiver=r,i.transceiver={receiver:r},i.streams=[t.stream],this.dispatchEvent(i)})},this.addEventListener("addstream",this._ontrackpoly)),t.apply(this,arguments)}}}function T(e){if("object"==typeof e&&e.RTCPeerConnection&&!("getSenders"in e.RTCPeerConnection.prototype)&&"createDTMFSender"in e.RTCPeerConnection.prototype){let t=function(e,t){return{track:t,get dtmf(){return void 0===this._dtmf&&("audio"===t.kind?this._dtmf=e.createDTMFSender(t):this._dtmf=null),this._dtmf},_pc:e}};if(!e.RTCPeerConnection.prototype.getSenders){e.RTCPeerConnection.prototype.getSenders=function(){return this._senders=this._senders||[],this._senders.slice()};let n=e.RTCPeerConnection.prototype.addTrack;e.RTCPeerConnection.prototype.addTrack=function(e,r){let i=n.apply(this,arguments);return i||(i=t(this,e),this._senders.push(i)),i};let r=e.RTCPeerConnection.prototype.removeTrack;e.RTCPeerConnection.prototype.removeTrack=function(e){r.apply(this,arguments);let t=this._senders.indexOf(e);-1!==t&&this._senders.splice(t,1)}}let n=e.RTCPeerConnection.prototype.addStream;e.RTCPeerConnection.prototype.addStream=function(e){this._senders=this._senders||[],n.apply(this,[e]),e.getTracks().forEach(e=>{this._senders.push(t(this,e))})};let r=e.RTCPeerConnection.prototype.removeStream;e.RTCPeerConnection.prototype.removeStream=function(e){this._senders=this._senders||[],r.apply(this,[e]),e.getTracks().forEach(e=>{let t=this._senders.find(t=>t.track===e);t&&this._senders.splice(this._senders.indexOf(t),1)})}}else if("object"==typeof e&&e.RTCPeerConnection&&"getSenders"in e.RTCPeerConnection.prototype&&"createDTMFSender"in e.RTCPeerConnection.prototype&&e.RTCRtpSender&&!("dtmf"in e.RTCRtpSender.prototype)){let t=e.RTCPeerConnection.prototype.getSenders;e.RTCPeerConnection.prototype.getSenders=function(){let e=t.apply(this,[]);return e.forEach(e=>e._pc=this),e},Object.defineProperty(e.RTCRtpSender.prototype,"dtmf",{get(){return void 0===this._dtmf&&("audio"===this.track.kind?this._dtmf=this._pc.createDTMFSender(this.track):this._dtmf=null),this._dtmf}})}}function S(e){if(!("object"==typeof e&&e.RTCPeerConnection&&e.RTCRtpSender&&e.RTCRtpReceiver))return;if(!("getStats"in e.RTCRtpSender.prototype)){let t=e.RTCPeerConnection.prototype.getSenders;t&&(e.RTCPeerConnection.prototype.getSenders=function(){let e=t.apply(this,[]);return e.forEach(e=>e._pc=this),e});let n=e.RTCPeerConnection.prototype.addTrack;n&&(e.RTCPeerConnection.prototype.addTrack=function(){let e=n.apply(this,arguments);return e._pc=this,e}),e.RTCRtpSender.prototype.getStats=function(){let e=this;return this._pc.getStats().then(t=>g(t,e.track,!0))}}if(!("getStats"in e.RTCRtpReceiver.prototype)){let t=e.RTCPeerConnection.prototype.getReceivers;t&&(e.RTCPeerConnection.prototype.getReceivers=function(){let e=t.apply(this,[]);return e.forEach(e=>e._pc=this),e}),l(e,"track",e=>(e.receiver._pc=e.srcElement,e)),e.RTCRtpReceiver.prototype.getStats=function(){let e=this;return this._pc.getStats().then(t=>g(t,e.track,!1))}}if(!("getStats"in e.RTCRtpSender.prototype&&"getStats"in e.RTCRtpReceiver.prototype))return;let t=e.RTCPeerConnection.prototype.getStats;e.RTCPeerConnection.prototype.getStats=function(){if(arguments.length>0&&arguments[0]instanceof e.MediaStreamTrack){let e,t,n,r=arguments[0];return(this.getSenders().forEach(t=>{t.track===r&&(e?n=!0:e=t)}),this.getReceivers().forEach(e=>(e.track===r&&(t?n=!0:t=e),e.track===r)),n||e&&t)?Promise.reject(new DOMException("There are more than one sender or receiver for the track.","InvalidAccessError")):e?e.getStats():t?t.getStats():Promise.reject(new DOMException("There is no sender or receiver for the track.","InvalidAccessError"))}return t.apply(this,arguments)}}function k(e){e.RTCPeerConnection.prototype.getLocalStreams=function(){return this._shimmedLocalStreams=this._shimmedLocalStreams||{},Object.keys(this._shimmedLocalStreams).map(e=>this._shimmedLocalStreams[e][0])};let t=e.RTCPeerConnection.prototype.addTrack;e.RTCPeerConnection.prototype.addTrack=function(e,n){if(!n)return t.apply(this,arguments);this._shimmedLocalStreams=this._shimmedLocalStreams||{};let r=t.apply(this,arguments);return this._shimmedLocalStreams[n.id]?-1===this._shimmedLocalStreams[n.id].indexOf(r)&&this._shimmedLocalStreams[n.id].push(r):this._shimmedLocalStreams[n.id]=[n,r],r};let n=e.RTCPeerConnection.prototype.addStream;e.RTCPeerConnection.prototype.addStream=function(e){this._shimmedLocalStreams=this._shimmedLocalStreams||{},e.getTracks().forEach(e=>{if(this.getSenders().find(t=>t.track===e))throw new DOMException("Track already exists.","InvalidAccessError")});let t=this.getSenders();n.apply(this,arguments);let r=this.getSenders().filter(e=>-1===t.indexOf(e));this._shimmedLocalStreams[e.id]=[e].concat(r)};let r=e.RTCPeerConnection.prototype.removeStream;e.RTCPeerConnection.prototype.removeStream=function(e){return this._shimmedLocalStreams=this._shimmedLocalStreams||{},delete this._shimmedLocalStreams[e.id],r.apply(this,arguments)};let i=e.RTCPeerConnection.prototype.removeTrack;e.RTCPeerConnection.prototype.removeTrack=function(e){return this._shimmedLocalStreams=this._shimmedLocalStreams||{},e&&Object.keys(this._shimmedLocalStreams).forEach(t=>{let n=this._shimmedLocalStreams[t].indexOf(e);-1!==n&&this._shimmedLocalStreams[t].splice(n,1),1===this._shimmedLocalStreams[t].length&&delete this._shimmedLocalStreams[t]}),i.apply(this,arguments)}}function R(e,t){if(!e.RTCPeerConnection)return;if(e.RTCPeerConnection.prototype.addTrack&&t.version>=65)return k(e);let n=e.RTCPeerConnection.prototype.getLocalStreams;e.RTCPeerConnection.prototype.getLocalStreams=function(){let e=n.apply(this);return this._reverseStreams=this._reverseStreams||{},e.map(e=>this._reverseStreams[e.id])};let r=e.RTCPeerConnection.prototype.addStream;e.RTCPeerConnection.prototype.addStream=function(t){if(this._streams=this._streams||{},this._reverseStreams=this._reverseStreams||{},t.getTracks().forEach(e=>{if(this.getSenders().find(t=>t.track===e))throw new DOMException("Track already exists.","InvalidAccessError")}),!this._reverseStreams[t.id]){let n=new e.MediaStream(t.getTracks());this._streams[t.id]=n,this._reverseStreams[n.id]=t,t=n}r.apply(this,[t])};let i=e.RTCPeerConnection.prototype.removeStream;function s(e,t){let n=t.sdp;return Object.keys(e._reverseStreams||[]).forEach(t=>{let r=e._reverseStreams[t],i=e._streams[r.id];n=n.replace(RegExp(i.id,"g"),r.id)}),new RTCSessionDescription({type:t.type,sdp:n})}e.RTCPeerConnection.prototype.removeStream=function(e){this._streams=this._streams||{},this._reverseStreams=this._reverseStreams||{},i.apply(this,[this._streams[e.id]||e]),delete this._reverseStreams[this._streams[e.id]?this._streams[e.id].id:e.id],delete this._streams[e.id]},e.RTCPeerConnection.prototype.addTrack=function(t,n){if("closed"===this.signalingState)throw new DOMException("The RTCPeerConnection's signalingState is 'closed'.","InvalidStateError");let r=[].slice.call(arguments,1);if(1!==r.length||!r[0].getTracks().find(e=>e===t))throw new DOMException("The adapter.js addTrack polyfill only supports a single  stream which is associated with the specified track.","NotSupportedError");if(this.getSenders().find(e=>e.track===t))throw new DOMException("Track already exists.","InvalidAccessError");this._streams=this._streams||{},this._reverseStreams=this._reverseStreams||{};let i=this._streams[n.id];if(i)i.addTrack(t),Promise.resolve().then(()=>{this.dispatchEvent(new Event("negotiationneeded"))});else{let r=new e.MediaStream([t]);this._streams[n.id]=r,this._reverseStreams[r.id]=n,this.addStream(r)}return this.getSenders().find(e=>e.track===t)},["createOffer","createAnswer"].forEach(function(t){let n=e.RTCPeerConnection.prototype[t];e.RTCPeerConnection.prototype[t]=({[t](){let e=arguments,t=arguments.length&&"function"==typeof arguments[0];return t?n.apply(this,[t=>{let n=s(this,t);e[0].apply(null,[n])},t=>{e[1]&&e[1].apply(null,t)},arguments[2]]):n.apply(this,arguments).then(e=>s(this,e))}})[t]});let o=e.RTCPeerConnection.prototype.setLocalDescription;e.RTCPeerConnection.prototype.setLocalDescription=function(){var e,t;let n;return arguments.length&&arguments[0].type?(arguments[0]=(e=this,t=arguments[0],n=t.sdp,Object.keys(e._reverseStreams||[]).forEach(t=>{let r=e._reverseStreams[t],i=e._streams[r.id];n=n.replace(RegExp(r.id,"g"),i.id)}),new RTCSessionDescription({type:t.type,sdp:n})),o.apply(this,arguments)):o.apply(this,arguments)};let a=Object.getOwnPropertyDescriptor(e.RTCPeerConnection.prototype,"localDescription");Object.defineProperty(e.RTCPeerConnection.prototype,"localDescription",{get(){let e=a.get.apply(this);return""===e.type?e:s(this,e)}}),e.RTCPeerConnection.prototype.removeTrack=function(e){let t;if("closed"===this.signalingState)throw new DOMException("The RTCPeerConnection's signalingState is 'closed'.","InvalidStateError");if(!e._pc)throw new DOMException("Argument 1 of RTCPeerConnection.removeTrack does not implement interface RTCRtpSender.","TypeError");if(e._pc!==this)throw new DOMException("Sender was not created by this connection.","InvalidAccessError");this._streams=this._streams||{},Object.keys(this._streams).forEach(n=>{this._streams[n].getTracks().find(t=>e.track===t)&&(t=this._streams[n])}),t&&(1===t.getTracks().length?this.removeStream(this._reverseStreams[t.id]):t.removeTrack(e.track),this.dispatchEvent(new Event("negotiationneeded")))}}function P(e,t){!e.RTCPeerConnection&&e.webkitRTCPeerConnection&&(e.RTCPeerConnection=e.webkitRTCPeerConnection),e.RTCPeerConnection&&t.version<53&&["setLocalDescription","setRemoteDescription","addIceCandidate"].forEach(function(t){let n=e.RTCPeerConnection.prototype[t];e.RTCPeerConnection.prototype[t]=({[t](){return arguments[0]=new("addIceCandidate"===t?e.RTCIceCandidate:e.RTCSessionDescription)(arguments[0]),n.apply(this,arguments)}})[t]})}function w(e,t){l(e,"negotiationneeded",e=>{let n=e.target;if(!(t.version<72)&&(!n.getConfiguration||"plan-b"!==n.getConfiguration().sdpSemantics)||"stable"===n.signalingState)return e})}"use strict";e(y,"shimMediaStream",()=>v),e(y,"shimOnTrack",()=>b),e(y,"shimGetSendersWithDtmf",()=>T),e(y,"shimSenderReceiverGetStats",()=>S),e(y,"shimAddTrackRemoveTrackWithNative",()=>k),e(y,"shimAddTrackRemoveTrack",()=>R),e(y,"shimPeerConnection",()=>P),e(y,"fixNegotiationNeeded",()=>w),e(y,"shimGetUserMedia",()=>C);var E={};function x(e,t){let n=e&&e.navigator,r=e&&e.MediaStreamTrack;if(n.getUserMedia=function(e,t,r){m("navigator.getUserMedia","navigator.mediaDevices.getUserMedia"),n.mediaDevices.getUserMedia(e).then(t,r)},!(t.version>55&&"autoGainControl"in n.mediaDevices.getSupportedConstraints())){let e=function(e,t,n){t in e&&!(n in e)&&(e[n]=e[t],delete e[t])},t=n.mediaDevices.getUserMedia.bind(n.mediaDevices);if(n.mediaDevices.getUserMedia=function(n){return"object"==typeof n&&"object"==typeof n.audio&&(e((n=JSON.parse(JSON.stringify(n))).audio,"autoGainControl","mozAutoGainControl"),e(n.audio,"noiseSuppression","mozNoiseSuppression")),t(n)},r&&r.prototype.getSettings){let t=r.prototype.getSettings;r.prototype.getSettings=function(){let n=t.apply(this,arguments);return e(n,"mozAutoGainControl","autoGainControl"),e(n,"mozNoiseSuppression","noiseSuppression"),n}}if(r&&r.prototype.applyConstraints){let t=r.prototype.applyConstraints;r.prototype.applyConstraints=function(n){return"audio"===this.kind&&"object"==typeof n&&(e(n=JSON.parse(JSON.stringify(n)),"autoGainControl","mozAutoGainControl"),e(n,"noiseSuppression","mozNoiseSuppression")),t.apply(this,[n])}}}}"use strict";function D(e,t){e.navigator.mediaDevices&&"getDisplayMedia"in e.navigator.mediaDevices||e.navigator.mediaDevices&&(e.navigator.mediaDevices.getDisplayMedia=function(n){if(!(n&&n.video)){let e=new DOMException("getDisplayMedia without video constraints is undefined");return e.name="NotFoundError",e.code=8,Promise.reject(e)}return!0===n.video?n.video={mediaSource:t}:n.video.mediaSource=t,e.navigator.mediaDevices.getUserMedia(n)})}"use strict";function I(e){"object"==typeof e&&e.RTCTrackEvent&&"receiver"in e.RTCTrackEvent.prototype&&!("transceiver"in e.RTCTrackEvent.prototype)&&Object.defineProperty(e.RTCTrackEvent.prototype,"transceiver",{get(){return{receiver:this.receiver}}})}function M(e,t){if("object"!=typeof e||!(e.RTCPeerConnection||e.mozRTCPeerConnection))return;!e.RTCPeerConnection&&e.mozRTCPeerConnection&&(e.RTCPeerConnection=e.mozRTCPeerConnection),t.version<53&&["setLocalDescription","setRemoteDescription","addIceCandidate"].forEach(function(t){let n=e.RTCPeerConnection.prototype[t];e.RTCPeerConnection.prototype[t]=({[t](){return arguments[0]=new("addIceCandidate"===t?e.RTCIceCandidate:e.RTCSessionDescription)(arguments[0]),n.apply(this,arguments)}})[t]});let n={inboundrtp:"inbound-rtp",outboundrtp:"outbound-rtp",candidatepair:"candidate-pair",localcandidate:"local-candidate",remotecandidate:"remote-candidate"},r=e.RTCPeerConnection.prototype.getStats;e.RTCPeerConnection.prototype.getStats=function(){let[e,i,s]=arguments;return r.apply(this,[e||null]).then(e=>{if(t.version<53&&!i)try{e.forEach(e=>{e.type=n[e.type]||e.type})}catch(t){if("TypeError"!==t.name)throw t;e.forEach((t,r)=>{e.set(r,Object.assign({},t,{type:n[t.type]||t.type}))})}return e}).then(i,s)}}function O(e){if(!("object"==typeof e&&e.RTCPeerConnection&&e.RTCRtpSender)||e.RTCRtpSender&&"getStats"in e.RTCRtpSender.prototype)return;let t=e.RTCPeerConnection.prototype.getSenders;t&&(e.RTCPeerConnection.prototype.getSenders=function(){let e=t.apply(this,[]);return e.forEach(e=>e._pc=this),e});let n=e.RTCPeerConnection.prototype.addTrack;n&&(e.RTCPeerConnection.prototype.addTrack=function(){let e=n.apply(this,arguments);return e._pc=this,e}),e.RTCRtpSender.prototype.getStats=function(){return this.track?this._pc.getStats(this.track):Promise.resolve(new Map)}}function L(e){if(!("object"==typeof e&&e.RTCPeerConnection&&e.RTCRtpSender)||e.RTCRtpSender&&"getStats"in e.RTCRtpReceiver.prototype)return;let t=e.RTCPeerConnection.prototype.getReceivers;t&&(e.RTCPeerConnection.prototype.getReceivers=function(){let e=t.apply(this,[]);return e.forEach(e=>e._pc=this),e}),l(e,"track",e=>(e.receiver._pc=e.srcElement,e)),e.RTCRtpReceiver.prototype.getStats=function(){return this._pc.getStats(this.track)}}function A(e){!e.RTCPeerConnection||"removeStream"in e.RTCPeerConnection.prototype||(e.RTCPeerConnection.prototype.removeStream=function(e){m("removeStream","removeTrack"),this.getSenders().forEach(t=>{t.track&&e.getTracks().includes(t.track)&&this.removeTrack(t)})})}function j(e){e.DataChannel&&!e.RTCDataChannel&&(e.RTCDataChannel=e.DataChannel)}function B(e){if(!("object"==typeof e&&e.RTCPeerConnection))return;let t=e.RTCPeerConnection.prototype.addTransceiver;t&&(e.RTCPeerConnection.prototype.addTransceiver=function(){this.setParametersPromises=[];let e=arguments[1]&&arguments[1].sendEncodings;void 0===e&&(e=[]);let n=(e=[...e]).length>0;n&&e.forEach(e=>{if("rid"in e&&!/^[a-z0-9]{0,16}$/i.test(e.rid))throw TypeError("Invalid RID value provided.");if("scaleResolutionDownBy"in e&&!(parseFloat(e.scaleResolutionDownBy)>=1))throw RangeError("scale_resolution_down_by must be >= 1.0");if("maxFramerate"in e&&!(parseFloat(e.maxFramerate)>=0))throw RangeError("max_framerate must be >= 0.0")});let r=t.apply(this,arguments);if(n){let{sender:t}=r,n=t.getParameters();"encodings"in n&&(1!==n.encodings.length||0!==Object.keys(n.encodings[0]).length)||(n.encodings=e,t.sendEncodings=e,this.setParametersPromises.push(t.setParameters(n).then(()=>{delete t.sendEncodings}).catch(()=>{delete t.sendEncodings})))}return r})}function U(e){if(!("object"==typeof e&&e.RTCRtpSender))return;let t=e.RTCRtpSender.prototype.getParameters;t&&(e.RTCRtpSender.prototype.getParameters=function(){let e=t.apply(this,arguments);return"encodings"in e||(e.encodings=[].concat(this.sendEncodings||[{}])),e})}function F(e){if(!("object"==typeof e&&e.RTCPeerConnection))return;let t=e.RTCPeerConnection.prototype.createOffer;e.RTCPeerConnection.prototype.createOffer=function(){return this.setParametersPromises&&this.setParametersPromises.length?Promise.all(this.setParametersPromises).then(()=>t.apply(this,arguments)).finally(()=>{this.setParametersPromises=[]}):t.apply(this,arguments)}}function N(e){if(!("object"==typeof e&&e.RTCPeerConnection))return;let t=e.RTCPeerConnection.prototype.createAnswer;e.RTCPeerConnection.prototype.createAnswer=function(){return this.setParametersPromises&&this.setParametersPromises.length?Promise.all(this.setParametersPromises).then(()=>t.apply(this,arguments)).finally(()=>{this.setParametersPromises=[]}):t.apply(this,arguments)}}"use strict";e(E,"shimOnTrack",()=>I),e(E,"shimPeerConnection",()=>M),e(E,"shimSenderGetStats",()=>O),e(E,"shimReceiverGetStats",()=>L),e(E,"shimRemoveStream",()=>A),e(E,"shimRTCDataChannel",()=>j),e(E,"shimAddTransceiver",()=>B),e(E,"shimGetParameters",()=>U),e(E,"shimCreateOffer",()=>F),e(E,"shimCreateAnswer",()=>N),e(E,"shimGetUserMedia",()=>x),e(E,"shimGetDisplayMedia",()=>D);var z={};function $(e){if("object"==typeof e&&e.RTCPeerConnection){if("getLocalStreams"in e.RTCPeerConnection.prototype||(e.RTCPeerConnection.prototype.getLocalStreams=function(){return this._localStreams||(this._localStreams=[]),this._localStreams}),!("addStream"in e.RTCPeerConnection.prototype)){let t=e.RTCPeerConnection.prototype.addTrack;e.RTCPeerConnection.prototype.addStream=function(e){this._localStreams||(this._localStreams=[]),this._localStreams.includes(e)||this._localStreams.push(e),e.getAudioTracks().forEach(n=>t.call(this,n,e)),e.getVideoTracks().forEach(n=>t.call(this,n,e))},e.RTCPeerConnection.prototype.addTrack=function(e,...n){return n&&n.forEach(e=>{this._localStreams?this._localStreams.includes(e)||this._localStreams.push(e):this._localStreams=[e]}),t.apply(this,arguments)}}"removeStream"in e.RTCPeerConnection.prototype||(e.RTCPeerConnection.prototype.removeStream=function(e){this._localStreams||(this._localStreams=[]);let t=this._localStreams.indexOf(e);if(-1===t)return;this._localStreams.splice(t,1);let n=e.getTracks();this.getSenders().forEach(e=>{n.includes(e.track)&&this.removeTrack(e)})})}}function V(e){if("object"==typeof e&&e.RTCPeerConnection&&("getRemoteStreams"in e.RTCPeerConnection.prototype||(e.RTCPeerConnection.prototype.getRemoteStreams=function(){return this._remoteStreams?this._remoteStreams:[]}),!("onaddstream"in e.RTCPeerConnection.prototype))){Object.defineProperty(e.RTCPeerConnection.prototype,"onaddstream",{get(){return this._onaddstream},set(e){this._onaddstream&&(this.removeEventListener("addstream",this._onaddstream),this.removeEventListener("track",this._onaddstreampoly)),this.addEventListener("addstream",this._onaddstream=e),this.addEventListener("track",this._onaddstreampoly=e=>{e.streams.forEach(e=>{if(this._remoteStreams||(this._remoteStreams=[]),this._remoteStreams.includes(e))return;this._remoteStreams.push(e);let t=new Event("addstream");t.stream=e,this.dispatchEvent(t)})})}});let t=e.RTCPeerConnection.prototype.setRemoteDescription;e.RTCPeerConnection.prototype.setRemoteDescription=function(){let e=this;return this._onaddstreampoly||this.addEventListener("track",this._onaddstreampoly=function(t){t.streams.forEach(t=>{if(e._remoteStreams||(e._remoteStreams=[]),e._remoteStreams.indexOf(t)>=0)return;e._remoteStreams.push(t);let n=new Event("addstream");n.stream=t,e.dispatchEvent(n)})}),t.apply(e,arguments)}}}function G(e){if("object"!=typeof e||!e.RTCPeerConnection)return;let t=e.RTCPeerConnection.prototype,n=t.createOffer,r=t.createAnswer,i=t.setLocalDescription,s=t.setRemoteDescription,o=t.addIceCandidate;t.createOffer=function(e,t){let r=arguments.length>=2?arguments[2]:arguments[0],i=n.apply(this,[r]);return t?(i.then(e,t),Promise.resolve()):i},t.createAnswer=function(e,t){let n=arguments.length>=2?arguments[2]:arguments[0],i=r.apply(this,[n]);return t?(i.then(e,t),Promise.resolve()):i};let a=function(e,t,n){let r=i.apply(this,[e]);return n?(r.then(t,n),Promise.resolve()):r};t.setLocalDescription=a,t.setRemoteDescription=a=function(e,t,n){let r=s.apply(this,[e]);return n?(r.then(t,n),Promise.resolve()):r},t.addIceCandidate=function(e,t,n){let r=o.apply(this,[e]);return n?(r.then(t,n),Promise.resolve()):r}}function J(e){let t=e&&e.navigator;if(t.mediaDevices&&t.mediaDevices.getUserMedia){let e=t.mediaDevices,n=e.getUserMedia.bind(e);t.mediaDevices.getUserMedia=e=>n(W(e))}!t.getUserMedia&&t.mediaDevices&&t.mediaDevices.getUserMedia&&(t.getUserMedia=(function(e,n,r){t.mediaDevices.getUserMedia(e).then(n,r)}).bind(t))}function W(e){return e&&void 0!==e.video?Object.assign({},e,{video:function e(t){return _(t)?Object.keys(t).reduce(function(n,r){let i=_(t[r]),s=i?e(t[r]):t[r],o=i&&!Object.keys(s).length;return void 0===s||o?n:Object.assign(n,{[r]:s})},{}):t}(e.video)}):e}function Y(e){if(!e.RTCPeerConnection)return;let t=e.RTCPeerConnection;e.RTCPeerConnection=function(e,n){if(e&&e.iceServers){let t=[];for(let n=0;n<e.iceServers.length;n++){let r=e.iceServers[n];void 0===r.urls&&r.url?(m("RTCIceServer.url","RTCIceServer.urls"),(r=JSON.parse(JSON.stringify(r))).urls=r.url,delete r.url,t.push(r)):t.push(e.iceServers[n])}e.iceServers=t}return new t(e,n)},e.RTCPeerConnection.prototype=t.prototype,"generateCertificate"in t&&Object.defineProperty(e.RTCPeerConnection,"generateCertificate",{get:()=>t.generateCertificate})}function H(e){"object"==typeof e&&e.RTCTrackEvent&&"receiver"in e.RTCTrackEvent.prototype&&!("transceiver"in e.RTCTrackEvent.prototype)&&Object.defineProperty(e.RTCTrackEvent.prototype,"transceiver",{get(){return{receiver:this.receiver}}})}function K(e){let t=e.RTCPeerConnection.prototype.createOffer;e.RTCPeerConnection.prototype.createOffer=function(e){if(e){void 0!==e.offerToReceiveAudio&&(e.offerToReceiveAudio=!!e.offerToReceiveAudio);let t=this.getTransceivers().find(e=>"audio"===e.receiver.track.kind);!1===e.offerToReceiveAudio&&t?"sendrecv"===t.direction?t.setDirection?t.setDirection("sendonly"):t.direction="sendonly":"recvonly"===t.direction&&(t.setDirection?t.setDirection("inactive"):t.direction="inactive"):!0!==e.offerToReceiveAudio||t||this.addTransceiver("audio",{direction:"recvonly"}),void 0!==e.offerToReceiveVideo&&(e.offerToReceiveVideo=!!e.offerToReceiveVideo);let n=this.getTransceivers().find(e=>"video"===e.receiver.track.kind);!1===e.offerToReceiveVideo&&n?"sendrecv"===n.direction?n.setDirection?n.setDirection("sendonly"):n.direction="sendonly":"recvonly"===n.direction&&(n.setDirection?n.setDirection("inactive"):n.direction="inactive"):!0!==e.offerToReceiveVideo||n||this.addTransceiver("video",{direction:"recvonly"})}return t.apply(this,arguments)}}function X(e){"object"!=typeof e||e.AudioContext||(e.AudioContext=e.webkitAudioContext)}e(z,"shimLocalStreamsAPI",()=>$),e(z,"shimRemoteStreamsAPI",()=>V),e(z,"shimCallbacksAPI",()=>G),e(z,"shimGetUserMedia",()=>J),e(z,"shimConstraints",()=>W),e(z,"shimRTCIceServerUrls",()=>Y),e(z,"shimTrackEventTransceiver",()=>H),e(z,"shimCreateOfferLegacy",()=>K),e(z,"shimAudioContext",()=>X);var Q={};"use strict";e(Q,"shimRTCIceCandidate",()=>ee),e(Q,"shimRTCIceCandidateRelayProtocol",()=>et),e(Q,"shimMaxMessageSize",()=>en),e(Q,"shimSendThrowTypeError",()=>er),e(Q,"shimConnectionState",()=>ei),e(Q,"removeExtmapAllowMixed",()=>es),e(Q,"shimAddIceCandidateNullOrEmpty",()=>eo),e(Q,"shimParameterlessSetLocalDescription",()=>ea);var q={};"use strict";let Z={};function ee(e){if(!e.RTCIceCandidate||e.RTCIceCandidate&&"foundation"in e.RTCIceCandidate.prototype)return;let n=e.RTCIceCandidate;e.RTCIceCandidate=function(e){if("object"==typeof e&&e.candidate&&0===e.candidate.indexOf("a=")&&((e=JSON.parse(JSON.stringify(e))).candidate=e.candidate.substring(2)),e.candidate&&e.candidate.length){let r=new n(e),i=t(q).parseCandidate(e.candidate);for(let e in i)e in r||Object.defineProperty(r,e,{value:i[e]});return r.toJSON=function(){return{candidate:r.candidate,sdpMid:r.sdpMid,sdpMLineIndex:r.sdpMLineIndex,usernameFragment:r.usernameFragment}},r}return new n(e)},e.RTCIceCandidate.prototype=n.prototype,l(e,"icecandidate",t=>(t.candidate&&Object.defineProperty(t,"candidate",{value:new e.RTCIceCandidate(t.candidate),writable:"false"}),t))}function et(e){!e.RTCIceCandidate||e.RTCIceCandidate&&"relayProtocol"in e.RTCIceCandidate.prototype||l(e,"icecandidate",e=>{if(e.candidate){let n=t(q).parseCandidate(e.candidate.candidate);"relay"===n.type&&(e.candidate.relayProtocol=({0:"tls",1:"tcp",2:"udp"})[n.priority>>24])}return e})}function en(e,n){if(!e.RTCPeerConnection)return;"sctp"in e.RTCPeerConnection.prototype||Object.defineProperty(e.RTCPeerConnection.prototype,"sctp",{get(){return void 0===this._sctp?null:this._sctp}});let r=function(e){if(!e||!e.sdp)return!1;let n=t(q).splitSections(e.sdp);return n.shift(),n.some(e=>{let n=t(q).parseMLine(e);return n&&"application"===n.kind&&-1!==n.protocol.indexOf("SCTP")})},i=function(e){let t=e.sdp.match(/mozilla...THIS_IS_SDPARTA-(\d+)/);if(null===t||t.length<2)return -1;let n=parseInt(t[1],10);return n!=n?-1:n},s=function(e){let t=65536;return"firefox"===n.browser&&(t=n.version<57?-1===e?16384:0x7ffffff5:n.version<60?57===n.version?65535:65536:0x7ffffff5),t},o=function(e,r){let i=65536;"firefox"===n.browser&&57===n.version&&(i=65535);let s=t(q).matchPrefix(e.sdp,"a=max-message-size:");return s.length>0?i=parseInt(s[0].substring(19),10):"firefox"===n.browser&&-1!==r&&(i=0x7ffffff5),i},a=e.RTCPeerConnection.prototype.setRemoteDescription;e.RTCPeerConnection.prototype.setRemoteDescription=function(){if(this._sctp=null,"chrome"===n.browser&&n.version>=76){let{sdpSemantics:e}=this.getConfiguration();"plan-b"===e&&Object.defineProperty(this,"sctp",{get(){return void 0===this._sctp?null:this._sctp},enumerable:!0,configurable:!0})}if(r(arguments[0])){let e,t=i(arguments[0]),n=s(t),r=o(arguments[0],t);e=0===n&&0===r?Number.POSITIVE_INFINITY:0===n||0===r?Math.max(n,r):Math.min(n,r);let a={};Object.defineProperty(a,"maxMessageSize",{get:()=>e}),this._sctp=a}return a.apply(this,arguments)}}function er(e){if(!(e.RTCPeerConnection&&"createDataChannel"in e.RTCPeerConnection.prototype))return;function t(e,t){let n=e.send;e.send=function(){let r=arguments[0],i=r.length||r.size||r.byteLength;if("open"===e.readyState&&t.sctp&&i>t.sctp.maxMessageSize)throw TypeError("Message too large (can send a maximum of "+t.sctp.maxMessageSize+" bytes)");return n.apply(e,arguments)}}let n=e.RTCPeerConnection.prototype.createDataChannel;e.RTCPeerConnection.prototype.createDataChannel=function(){let e=n.apply(this,arguments);return t(e,this),e},l(e,"datachannel",e=>(t(e.channel,e.target),e))}function ei(e){if(!e.RTCPeerConnection||"connectionState"in e.RTCPeerConnection.prototype)return;let t=e.RTCPeerConnection.prototype;Object.defineProperty(t,"connectionState",{get(){return({completed:"connected",checking:"connecting"})[this.iceConnectionState]||this.iceConnectionState},enumerable:!0,configurable:!0}),Object.defineProperty(t,"onconnectionstatechange",{get(){return this._onconnectionstatechange||null},set(e){this._onconnectionstatechange&&(this.removeEventListener("connectionstatechange",this._onconnectionstatechange),delete this._onconnectionstatechange),e&&this.addEventListener("connectionstatechange",this._onconnectionstatechange=e)},enumerable:!0,configurable:!0}),["setLocalDescription","setRemoteDescription"].forEach(e=>{let n=t[e];t[e]=function(){return this._connectionstatechangepoly||(this._connectionstatechangepoly=e=>{let t=e.target;if(t._lastConnectionState!==t.connectionState){t._lastConnectionState=t.connectionState;let n=new Event("connectionstatechange",e);t.dispatchEvent(n)}return e},this.addEventListener("iceconnectionstatechange",this._connectionstatechangepoly)),n.apply(this,arguments)}})}function es(e,t){if(!e.RTCPeerConnection||"chrome"===t.browser&&t.version>=71||"safari"===t.browser&&t.version>=605)return;let n=e.RTCPeerConnection.prototype.setRemoteDescription;e.RTCPeerConnection.prototype.setRemoteDescription=function(t){if(t&&t.sdp&&-1!==t.sdp.indexOf("\na=extmap-allow-mixed")){let n=t.sdp.split("\n").filter(e=>"a=extmap-allow-mixed"!==e.trim()).join("\n");e.RTCSessionDescription&&t instanceof e.RTCSessionDescription?arguments[0]=new e.RTCSessionDescription({type:t.type,sdp:n}):t.sdp=n}return n.apply(this,arguments)}}function eo(e,t){if(!(e.RTCPeerConnection&&e.RTCPeerConnection.prototype))return;let n=e.RTCPeerConnection.prototype.addIceCandidate;n&&0!==n.length&&(e.RTCPeerConnection.prototype.addIceCandidate=function(){return arguments[0]?("chrome"===t.browser&&t.version<78||"firefox"===t.browser&&t.version<68||"safari"===t.browser)&&arguments[0]&&""===arguments[0].candidate?Promise.resolve():n.apply(this,arguments):(arguments[1]&&arguments[1].apply(null),Promise.resolve())})}function ea(e,t){if(!(e.RTCPeerConnection&&e.RTCPeerConnection.prototype))return;let n=e.RTCPeerConnection.prototype.setLocalDescription;n&&0!==n.length&&(e.RTCPeerConnection.prototype.setLocalDescription=function(){let e=arguments[0]||{};if("object"!=typeof e||e.type&&e.sdp)return n.apply(this,arguments);if(!(e={type:e.type,sdp:e.sdp}).type)switch(this.signalingState){case"stable":case"have-local-offer":case"have-remote-pranswer":e.type="offer";break;default:e.type="answer"}return e.sdp||"offer"!==e.type&&"answer"!==e.type?n.apply(this,[e]):("offer"===e.type?this.createOffer:this.createAnswer).apply(this).then(e=>n.apply(this,[e]))})}"use strict";Z.generateIdentifier=function(){return Math.random().toString(36).substring(2,12)},Z.localCName=Z.generateIdentifier(),Z.splitLines=function(e){return e.trim().split("\n").map(e=>e.trim())},Z.splitSections=function(e){return e.split("\nm=").map((e,t)=>(t>0?"m="+e:e).trim()+"\r\n")},Z.getDescription=function(e){let t=Z.splitSections(e);return t&&t[0]},Z.getMediaSections=function(e){let t=Z.splitSections(e);return t.shift(),t},Z.matchPrefix=function(e,t){return Z.splitLines(e).filter(e=>0===e.indexOf(t))},Z.parseCandidate=function(e){let t,n={foundation:(t=0===e.indexOf("a=candidate:")?e.substring(12).split(" "):e.substring(10).split(" "))[0],component:{1:"rtp",2:"rtcp"}[t[1]]||t[1],protocol:t[2].toLowerCase(),priority:parseInt(t[3],10),ip:t[4],address:t[4],port:parseInt(t[5],10),type:t[7]};for(let e=8;e<t.length;e+=2)switch(t[e]){case"raddr":n.relatedAddress=t[e+1];break;case"rport":n.relatedPort=parseInt(t[e+1],10);break;case"tcptype":n.tcpType=t[e+1];break;case"ufrag":n.ufrag=t[e+1],n.usernameFragment=t[e+1];break;default:void 0===n[t[e]]&&(n[t[e]]=t[e+1])}return n},Z.writeCandidate=function(e){let t=[];t.push(e.foundation);let n=e.component;"rtp"===n?t.push(1):"rtcp"===n?t.push(2):t.push(n),t.push(e.protocol.toUpperCase()),t.push(e.priority),t.push(e.address||e.ip),t.push(e.port);let r=e.type;return t.push("typ"),t.push(r),"host"!==r&&e.relatedAddress&&e.relatedPort&&(t.push("raddr"),t.push(e.relatedAddress),t.push("rport"),t.push(e.relatedPort)),e.tcpType&&"tcp"===e.protocol.toLowerCase()&&(t.push("tcptype"),t.push(e.tcpType)),(e.usernameFragment||e.ufrag)&&(t.push("ufrag"),t.push(e.usernameFragment||e.ufrag)),"candidate:"+t.join(" ")},Z.parseIceOptions=function(e){return e.substring(14).split(" ")},Z.parseRtpMap=function(e){let t=e.substring(9).split(" "),n={payloadType:parseInt(t.shift(),10)};return n.name=(t=t[0].split("/"))[0],n.clockRate=parseInt(t[1],10),n.channels=3===t.length?parseInt(t[2],10):1,n.numChannels=n.channels,n},Z.writeRtpMap=function(e){let t=e.payloadType;void 0!==e.preferredPayloadType&&(t=e.preferredPayloadType);let n=e.channels||e.numChannels||1;return"a=rtpmap:"+t+" "+e.name+"/"+e.clockRate+(1!==n?"/"+n:"")+"\r\n"},Z.parseExtmap=function(e){let t=e.substring(9).split(" ");return{id:parseInt(t[0],10),direction:t[0].indexOf("/")>0?t[0].split("/")[1]:"sendrecv",uri:t[1],attributes:t.slice(2).join(" ")}},Z.writeExtmap=function(e){return"a=extmap:"+(e.id||e.preferredId)+(e.direction&&"sendrecv"!==e.direction?"/"+e.direction:"")+" "+e.uri+(e.attributes?" "+e.attributes:"")+"\r\n"},Z.parseFmtp=function(e){let t,n={},r=e.substring(e.indexOf(" ")+1).split(";");for(let e=0;e<r.length;e++)n[(t=r[e].trim().split("="))[0].trim()]=t[1];return n},Z.writeFmtp=function(e){let t="",n=e.payloadType;if(void 0!==e.preferredPayloadType&&(n=e.preferredPayloadType),e.parameters&&Object.keys(e.parameters).length){let r=[];Object.keys(e.parameters).forEach(t=>{void 0!==e.parameters[t]?r.push(t+"="+e.parameters[t]):r.push(t)}),t+="a=fmtp:"+n+" "+r.join(";")+"\r\n"}return t},Z.parseRtcpFb=function(e){let t=e.substring(e.indexOf(" ")+1).split(" ");return{type:t.shift(),parameter:t.join(" ")}},Z.writeRtcpFb=function(e){let t="",n=e.payloadType;return void 0!==e.preferredPayloadType&&(n=e.preferredPayloadType),e.rtcpFeedback&&e.rtcpFeedback.length&&e.rtcpFeedback.forEach(e=>{t+="a=rtcp-fb:"+n+" "+e.type+(e.parameter&&e.parameter.length?" "+e.parameter:"")+"\r\n"}),t},Z.parseSsrcMedia=function(e){let t=e.indexOf(" "),n={ssrc:parseInt(e.substring(7,t),10)},r=e.indexOf(":",t);return r>-1?(n.attribute=e.substring(t+1,r),n.value=e.substring(r+1)):n.attribute=e.substring(t+1),n},Z.parseSsrcGroup=function(e){let t=e.substring(13).split(" ");return{semantics:t.shift(),ssrcs:t.map(e=>parseInt(e,10))}},Z.getMid=function(e){let t=Z.matchPrefix(e,"a=mid:")[0];if(t)return t.substring(6)},Z.parseFingerprint=function(e){let t=e.substring(14).split(" ");return{algorithm:t[0].toLowerCase(),value:t[1].toUpperCase()}},Z.getDtlsParameters=function(e,t){return{role:"auto",fingerprints:Z.matchPrefix(e+t,"a=fingerprint:").map(Z.parseFingerprint)}},Z.writeDtlsParameters=function(e,t){let n="a=setup:"+t+"\r\n";return e.fingerprints.forEach(e=>{n+="a=fingerprint:"+e.algorithm+" "+e.value+"\r\n"}),n},Z.parseCryptoLine=function(e){let t=e.substring(9).split(" ");return{tag:parseInt(t[0],10),cryptoSuite:t[1],keyParams:t[2],sessionParams:t.slice(3)}},Z.writeCryptoLine=function(e){return"a=crypto:"+e.tag+" "+e.cryptoSuite+" "+("object"==typeof e.keyParams?Z.writeCryptoKeyParams(e.keyParams):e.keyParams)+(e.sessionParams?" "+e.sessionParams.join(" "):"")+"\r\n"},Z.parseCryptoKeyParams=function(e){if(0!==e.indexOf("inline:"))return null;let t=e.substring(7).split("|");return{keyMethod:"inline",keySalt:t[0],lifeTime:t[1],mkiValue:t[2]?t[2].split(":")[0]:void 0,mkiLength:t[2]?t[2].split(":")[1]:void 0}},Z.writeCryptoKeyParams=function(e){return e.keyMethod+":"+e.keySalt+(e.lifeTime?"|"+e.lifeTime:"")+(e.mkiValue&&e.mkiLength?"|"+e.mkiValue+":"+e.mkiLength:"")},Z.getCryptoParameters=function(e,t){return Z.matchPrefix(e+t,"a=crypto:").map(Z.parseCryptoLine)},Z.getIceParameters=function(e,t){let n=Z.matchPrefix(e+t,"a=ice-ufrag:")[0],r=Z.matchPrefix(e+t,"a=ice-pwd:")[0];return n&&r?{usernameFragment:n.substring(12),password:r.substring(10)}:null},Z.writeIceParameters=function(e){let t="a=ice-ufrag:"+e.usernameFragment+"\r\na=ice-pwd:"+e.password+"\r\n";return e.iceLite&&(t+="a=ice-lite\r\n"),t},Z.parseRtpParameters=function(e){let t={codecs:[],headerExtensions:[],fecMechanisms:[],rtcp:[]},n=Z.splitLines(e)[0].split(" ");t.profile=n[2];for(let r=3;r<n.length;r++){let i=n[r],s=Z.matchPrefix(e,"a=rtpmap:"+i+" ")[0];if(s){let n=Z.parseRtpMap(s),r=Z.matchPrefix(e,"a=fmtp:"+i+" ");switch(n.parameters=r.length?Z.parseFmtp(r[0]):{},n.rtcpFeedback=Z.matchPrefix(e,"a=rtcp-fb:"+i+" ").map(Z.parseRtcpFb),t.codecs.push(n),n.name.toUpperCase()){case"RED":case"ULPFEC":t.fecMechanisms.push(n.name.toUpperCase())}}}Z.matchPrefix(e,"a=extmap:").forEach(e=>{t.headerExtensions.push(Z.parseExtmap(e))});let r=Z.matchPrefix(e,"a=rtcp-fb:* ").map(Z.parseRtcpFb);return t.codecs.forEach(e=>{r.forEach(t=>{e.rtcpFeedback.find(e=>e.type===t.type&&e.parameter===t.parameter)||e.rtcpFeedback.push(t)})}),t},Z.writeRtpDescription=function(e,t){let n="";n+="m="+e+" ",n+=t.codecs.length>0?"9":"0",n+=" "+(t.profile||"UDP/TLS/RTP/SAVPF")+" ",n+=t.codecs.map(e=>void 0!==e.preferredPayloadType?e.preferredPayloadType:e.payloadType).join(" ")+"\r\n",n+="c=IN IP4 0.0.0.0\r\n",n+="a=rtcp:9 IN IP4 0.0.0.0\r\n",t.codecs.forEach(e=>{n+=Z.writeRtpMap(e),n+=Z.writeFmtp(e),n+=Z.writeRtcpFb(e)});let r=0;return t.codecs.forEach(e=>{e.maxptime>r&&(r=e.maxptime)}),r>0&&(n+="a=maxptime:"+r+"\r\n"),t.headerExtensions&&t.headerExtensions.forEach(e=>{n+=Z.writeExtmap(e)}),n},Z.parseRtpEncodingParameters=function(e){let t,n=[],r=Z.parseRtpParameters(e),i=-1!==r.fecMechanisms.indexOf("RED"),s=-1!==r.fecMechanisms.indexOf("ULPFEC"),o=Z.matchPrefix(e,"a=ssrc:").map(e=>Z.parseSsrcMedia(e)).filter(e=>"cname"===e.attribute),a=o.length>0&&o[0].ssrc,c=Z.matchPrefix(e,"a=ssrc-group:FID").map(e=>e.substring(17).split(" ").map(e=>parseInt(e,10)));c.length>0&&c[0].length>1&&c[0][0]===a&&(t=c[0][1]),r.codecs.forEach(e=>{if("RTX"===e.name.toUpperCase()&&e.parameters.apt){let r={ssrc:a,codecPayloadType:parseInt(e.parameters.apt,10)};a&&t&&(r.rtx={ssrc:t}),n.push(r),i&&((r=JSON.parse(JSON.stringify(r))).fec={ssrc:a,mechanism:s?"red+ulpfec":"red"},n.push(r))}}),0===n.length&&a&&n.push({ssrc:a});let p=Z.matchPrefix(e,"b=");return p.length&&(p=0===p[0].indexOf("b=TIAS:")?parseInt(p[0].substring(7),10):0===p[0].indexOf("b=AS:")?950*parseInt(p[0].substring(5),10)-16e3:void 0,n.forEach(e=>{e.maxBitrate=p})),n},Z.parseRtcpParameters=function(e){let t={},n=Z.matchPrefix(e,"a=ssrc:").map(e=>Z.parseSsrcMedia(e)).filter(e=>"cname"===e.attribute)[0];n&&(t.cname=n.value,t.ssrc=n.ssrc);let r=Z.matchPrefix(e,"a=rtcp-rsize");return t.reducedSize=r.length>0,t.compound=0===r.length,t.mux=Z.matchPrefix(e,"a=rtcp-mux").length>0,t},Z.writeRtcpParameters=function(e){let t="";return e.reducedSize&&(t+="a=rtcp-rsize\r\n"),e.mux&&(t+="a=rtcp-mux\r\n"),void 0!==e.ssrc&&e.cname&&(t+="a=ssrc:"+e.ssrc+" cname:"+e.cname+"\r\n"),t},Z.parseMsid=function(e){let t,n=Z.matchPrefix(e,"a=msid:");if(1===n.length)return{stream:(t=n[0].substring(7).split(" "))[0],track:t[1]};let r=Z.matchPrefix(e,"a=ssrc:").map(e=>Z.parseSsrcMedia(e)).filter(e=>"msid"===e.attribute);if(r.length>0)return{stream:(t=r[0].value.split(" "))[0],track:t[1]}},Z.parseSctpDescription=function(e){let t,n=Z.parseMLine(e),r=Z.matchPrefix(e,"a=max-message-size:");r.length>0&&(t=parseInt(r[0].substring(19),10)),isNaN(t)&&(t=65536);let i=Z.matchPrefix(e,"a=sctp-port:");if(i.length>0)return{port:parseInt(i[0].substring(12),10),protocol:n.fmt,maxMessageSize:t};let s=Z.matchPrefix(e,"a=sctpmap:");if(s.length>0){let e=s[0].substring(10).split(" ");return{port:parseInt(e[0],10),protocol:e[1],maxMessageSize:t}}},Z.writeSctpDescription=function(e,t){let n=[];return n="DTLS/SCTP"!==e.protocol?["m="+e.kind+" 9 "+e.protocol+" "+t.protocol+"\r\n","c=IN IP4 0.0.0.0\r\n","a=sctp-port:"+t.port+"\r\n"]:["m="+e.kind+" 9 "+e.protocol+" "+t.port+"\r\n","c=IN IP4 0.0.0.0\r\n","a=sctpmap:"+t.port+" "+t.protocol+" 65535\r\n"],void 0!==t.maxMessageSize&&n.push("a=max-message-size:"+t.maxMessageSize+"\r\n"),n.join("")},Z.generateSessionId=function(){return Math.random().toString().substr(2,22)},Z.writeSessionBoilerplate=function(e,t,n){return"v=0\r\no="+(n||"thisisadapterortc")+" "+(e||Z.generateSessionId())+" "+(void 0!==t?t:2)+" IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\n"},Z.getDirection=function(e,t){let n=Z.splitLines(e);for(let e=0;e<n.length;e++)switch(n[e]){case"a=sendrecv":case"a=sendonly":case"a=recvonly":case"a=inactive":return n[e].substring(2)}return t?Z.getDirection(t):"sendrecv"},Z.getKind=function(e){return Z.splitLines(e)[0].split(" ")[0].substring(2)},Z.isRejected=function(e){return"0"===e.split(" ",2)[1]},Z.parseMLine=function(e){let t=Z.splitLines(e)[0].substring(2).split(" ");return{kind:t[0],port:parseInt(t[1],10),protocol:t[2],fmt:t.slice(3).join(" ")}},Z.parseOLine=function(e){let t=Z.matchPrefix(e,"o=")[0].substring(2).split(" ");return{username:t[0],sessionId:t[1],sessionVersion:parseInt(t[2],10),netType:t[3],addressType:t[4],address:t[5]}},Z.isValidSDP=function(e){if("string"!=typeof e||0===e.length)return!1;let t=Z.splitLines(e);for(let e=0;e<t.length;e++)if(t[e].length<2||"="!==t[e].charAt(1))return!1;return!0},q=Z;let ec=function({window:e}={},t={shimChrome:!0,shimFirefox:!0,shimSafari:!0}){let n=function(e){let t={browser:null,version:null};if(void 0===e||!e.navigator||!e.navigator.userAgent)return t.browser="Not a browser.",t;let{navigator:n}=e;if(n.userAgentData&&n.userAgentData.brands){let e=n.userAgentData.brands.find(e=>"Chromium"===e.brand);if(e)return{browser:"chrome",version:parseInt(e.version,10)}}return n.mozGetUserMedia?(t.browser="firefox",t.version=d(n.userAgent,/Firefox\/(\d+)\./,1)):n.webkitGetUserMedia||!1===e.isSecureContext&&e.webkitRTCPeerConnection?(t.browser="chrome",t.version=d(n.userAgent,/Chrom(e|ium)\/(\d+)\./,2)):e.RTCPeerConnection&&n.userAgent.match(/AppleWebKit\/(\d+)\./)?(t.browser="safari",t.version=d(n.userAgent,/AppleWebKit\/(\d+)\./,1),t.supportsUnifiedPlan=e.RTCRtpTransceiver&&"currentDirection"in e.RTCRtpTransceiver.prototype):t.browser="Not a supported browser.",t}(e),r={browserDetails:n,commonShim:Q,extractVersion:d,disableLog:h,disableWarnings:u,sdp:q};switch(n.browser){case"chrome":if(!y||!y.shimPeerConnection||!t.shimChrome){f("Chrome shim is not included in this adapter release.");break}if(null===n.version){f("Chrome shim can not determine version, not shimming.");break}f("adapter.js shimming chrome."),r.browserShim=y,eo(e,n),ea(e,n),y.shimGetUserMedia(e,n),y.shimMediaStream(e,n),y.shimPeerConnection(e,n),y.shimOnTrack(e,n),y.shimAddTrackRemoveTrack(e,n),y.shimGetSendersWithDtmf(e,n),y.shimSenderReceiverGetStats(e,n),y.fixNegotiationNeeded(e,n),ee(e,n),et(e,n),ei(e,n),en(e,n),er(e,n),es(e,n);break;case"firefox":if(!E||!E.shimPeerConnection||!t.shimFirefox){f("Firefox shim is not included in this adapter release.");break}f("adapter.js shimming firefox."),r.browserShim=E,eo(e,n),ea(e,n),E.shimGetUserMedia(e,n),E.shimPeerConnection(e,n),E.shimOnTrack(e,n),E.shimRemoveStream(e,n),E.shimSenderGetStats(e,n),E.shimReceiverGetStats(e,n),E.shimRTCDataChannel(e,n),E.shimAddTransceiver(e,n),E.shimGetParameters(e,n),E.shimCreateOffer(e,n),E.shimCreateAnswer(e,n),ee(e,n),ei(e,n),en(e,n),er(e,n);break;case"safari":if(!z||!t.shimSafari){f("Safari shim is not included in this adapter release.");break}f("adapter.js shimming safari."),r.browserShim=z,eo(e,n),ea(e,n),z.shimRTCIceServerUrls(e,n),z.shimCreateOfferLegacy(e,n),z.shimCallbacksAPI(e,n),z.shimLocalStreamsAPI(e,n),z.shimRemoteStreamsAPI(e,n),z.shimTrackEventTransceiver(e,n),z.shimGetUserMedia(e,n),z.shimAudioContext(e,n),ee(e,n),et(e,n),en(e,n),er(e,n),es(e,n);break;default:f("Unsupported browser!")}return r}({window:"undefined"==typeof window?void 0:window}),ep=ec.default||ec,ed=new class{isWebRTCSupported(){return"undefined"!=typeof RTCPeerConnection}isBrowserSupported(){let e=this.getBrowser(),t=this.getVersion();return!!this.supportedBrowsers.includes(e)&&("chrome"===e?t>=this.minChromeVersion:"firefox"===e?t>=this.minFirefoxVersion:"safari"===e&&!this.isIOS&&t>=this.minSafariVersion)}getBrowser(){return ep.browserDetails.browser}getVersion(){return ep.browserDetails.version||0}isUnifiedPlanSupported(){let e,t=this.getBrowser(),n=ep.browserDetails.version||0;if("chrome"===t&&n<this.minChromeVersion)return!1;if("firefox"===t&&n>=this.minFirefoxVersion)return!0;if(!window.RTCRtpTransceiver||!("currentDirection"in RTCRtpTransceiver.prototype))return!1;let r=!1;try{(e=new RTCPeerConnection).addTransceiver("audio"),r=!0}catch(e){}finally{e&&e.close()}return r}toString(){return`Supports:
+    browser:${this.getBrowser()}
+    version:${this.getVersion()}
+    isIOS:${this.isIOS}
+    isWebRTCSupported:${this.isWebRTCSupported()}
+    isBrowserSupported:${this.isBrowserSupported()}
+    isUnifiedPlanSupported:${this.isUnifiedPlanSupported()}`}constructor(){this.isIOS="undefined"!=typeof navigator&&["iPad","iPhone","iPod"].includes(navigator.platform),this.supportedBrowsers=["firefox","chrome","safari"],this.minFirefoxVersion=59,this.minChromeVersion=72,this.minSafariVersion=605}},el=e=>!e||/^[A-Za-z0-9]+(?:[ _-][A-Za-z0-9]+)*$/.test(e),eh=()=>Math.random().toString(36).slice(2),eu={iceServers:[{urls:"stun:stun.l.google.com:19302"},{urls:["turn:eu-0.turn.peerjs.com:3478","turn:us-0.turn.peerjs.com:3478"],username:"peerjs",credential:"peerjsp"}],sdpSemantics:"unified-plan"},ef=new class extends n{noop(){}blobToArrayBuffer(e,t){let n=new FileReader;return n.onload=function(e){e.target&&t(e.target.result)},n.readAsArrayBuffer(e),n}binaryStringToArrayBuffer(e){let t=new Uint8Array(e.length);for(let n=0;n<e.length;n++)t[n]=255&e.charCodeAt(n);return t.buffer}isSecure(){return"https:"===location.protocol}constructor(...e){super(...e),this.CLOUD_HOST="0.peerjs.com",this.CLOUD_PORT=443,this.chunkedBrowsers={Chrome:1,chrome:1},this.defaultConfig=eu,this.browser=ed.getBrowser(),this.browserVersion=ed.getVersion(),this.pack=s,this.unpack=i,this.supports=function(){let e,t={browser:ed.isBrowserSupported(),webRTC:ed.isWebRTCSupported(),audioVideo:!1,data:!1,binaryBlob:!1,reliable:!1};if(!t.webRTC)return t;try{let n;e=new RTCPeerConnection(eu),t.audioVideo=!0;try{n=e.createDataChannel("_PEERJSTEST",{ordered:!0}),t.data=!0,t.reliable=!!n.ordered;try{n.binaryType="blob",t.binaryBlob=!ed.isIOS}catch(e){}}catch(e){}finally{n&&n.close()}}catch(e){}finally{e&&e.close()}return t}(),this.validateId=el,this.randomToken=eh}};"use strict";var em=new class{get logLevel(){return this._logLevel}set logLevel(e){this._logLevel=e}log(...e){this._logLevel>=3&&this._print(3,...e)}warn(...e){this._logLevel>=2&&this._print(2,...e)}error(...e){this._logLevel>=1&&this._print(1,...e)}setLogFunction(e){this._print=e}_print(e,...t){let n=["PeerJS: ",...t];for(let e in n)n[e]instanceof Error&&(n[e]="("+n[e].name+") "+n[e].message);e>=3?console.log(...n):e>=2?console.warn("WARNING",...n):e>=1&&console.error("ERROR",...n)}constructor(){this._logLevel=0}},e_={},eg=Object.prototype.hasOwnProperty,ey="~";function eC(){}function ev(e,t,n){this.fn=e,this.context=t,this.once=n||!1}function eb(e,t,n,r,i){if("function"!=typeof n)throw TypeError("The listener must be a function");var s=new ev(n,r||e,i),o=ey?ey+t:t;return e._events[o]?e._events[o].fn?e._events[o]=[e._events[o],s]:e._events[o].push(s):(e._events[o]=s,e._eventsCount++),e}function eT(e,t){0==--e._eventsCount?e._events=new eC:delete e._events[t]}function eS(){this._events=new eC,this._eventsCount=0}Object.create&&(eC.prototype=Object.create(null),new eC().__proto__||(ey=!1)),eS.prototype.eventNames=function(){var e,t,n=[];if(0===this._eventsCount)return n;for(t in e=this._events)eg.call(e,t)&&n.push(ey?t.slice(1):t);return Object.getOwnPropertySymbols?n.concat(Object.getOwnPropertySymbols(e)):n},eS.prototype.listeners=function(e){var t=ey?ey+e:e,n=this._events[t];if(!n)return[];if(n.fn)return[n.fn];for(var r=0,i=n.length,s=Array(i);r<i;r++)s[r]=n[r].fn;return s},eS.prototype.listenerCount=function(e){var t=ey?ey+e:e,n=this._events[t];return n?n.fn?1:n.length:0},eS.prototype.emit=function(e,t,n,r,i,s){var o=ey?ey+e:e;if(!this._events[o])return!1;var a,c,p=this._events[o],d=arguments.length;if(p.fn){switch(p.once&&this.removeListener(e,p.fn,void 0,!0),d){case 1:return p.fn.call(p.context),!0;case 2:return p.fn.call(p.context,t),!0;case 3:return p.fn.call(p.context,t,n),!0;case 4:return p.fn.call(p.context,t,n,r),!0;case 5:return p.fn.call(p.context,t,n,r,i),!0;case 6:return p.fn.call(p.context,t,n,r,i,s),!0}for(c=1,a=Array(d-1);c<d;c++)a[c-1]=arguments[c];p.fn.apply(p.context,a)}else{var l,h=p.length;for(c=0;c<h;c++)switch(p[c].once&&this.removeListener(e,p[c].fn,void 0,!0),d){case 1:p[c].fn.call(p[c].context);break;case 2:p[c].fn.call(p[c].context,t);break;case 3:p[c].fn.call(p[c].context,t,n);break;case 4:p[c].fn.call(p[c].context,t,n,r);break;default:if(!a)for(l=1,a=Array(d-1);l<d;l++)a[l-1]=arguments[l];p[c].fn.apply(p[c].context,a)}}return!0},eS.prototype.on=function(e,t,n){return eb(this,e,t,n,!1)},eS.prototype.once=function(e,t,n){return eb(this,e,t,n,!0)},eS.prototype.removeListener=function(e,t,n,r){var i=ey?ey+e:e;if(!this._events[i])return this;if(!t)return eT(this,i),this;var s=this._events[i];if(s.fn)s.fn!==t||r&&!s.once||n&&s.context!==n||eT(this,i);else{for(var o=0,a=[],c=s.length;o<c;o++)(s[o].fn!==t||r&&!s[o].once||n&&s[o].context!==n)&&a.push(s[o]);a.length?this._events[i]=1===a.length?a[0]:a:eT(this,i)}return this},eS.prototype.removeAllListeners=function(e){var t;return e?(t=ey?ey+e:e,this._events[t]&&eT(this,t)):(this._events=new eC,this._eventsCount=0),this},eS.prototype.off=eS.prototype.removeListener,eS.prototype.addListener=eS.prototype.on,eS.prefixed=ey,eS.EventEmitter=eS,e_=eS;var ek=function(e){return e.Data="data",e.Media="media",e}({}),eR=function(e){return e.BrowserIncompatible="browser-incompatible",e.Disconnected="disconnected",e.InvalidID="invalid-id",e.InvalidKey="invalid-key",e.Network="network",e.PeerUnavailable="peer-unavailable",e.SslUnavailable="ssl-unavailable",e.ServerError="server-error",e.SocketError="socket-error",e.SocketClosed="socket-closed",e.UnavailableID="unavailable-id",e.WebRTC="webrtc",e}({}),eP=function(e){return e.NegotiationFailed="negotiation-failed",e.ConnectionClosed="connection-closed",e}({}),ew=function(e){return e.NotOpenYet="not-open-yet",e.MessageToBig="message-too-big",e}({}),eE=function(e){return e.Binary="binary",e.BinaryUTF8="binary-utf8",e.JSON="json",e.None="raw",e}({}),ex=function(e){return e.Message="message",e.Disconnected="disconnected",e.Error="error",e.Close="close",e}({}),eD=function(e){return e.Heartbeat="HEARTBEAT",e.Candidate="CANDIDATE",e.Offer="OFFER",e.Answer="ANSWER",e.Open="OPEN",e.Error="ERROR",e.IdTaken="ID-TAKEN",e.InvalidKey="INVALID-KEY",e.Leave="LEAVE",e.Expire="EXPIRE",e}({});let eI="1.5.5";class eM extends e_.EventEmitter{start(e,t){this._id=e;let n=`${this._baseUrl}&id=${e}&token=${t}`;!this._socket&&this._disconnected&&(this._socket=new WebSocket(n+"&version="+eI),this._disconnected=!1,this._socket.onmessage=e=>{let t;try{t=JSON.parse(e.data),em.log("Server message received:",t)}catch(t){em.log("Invalid server message",e.data);return}this.emit(ex.Message,t)},this._socket.onclose=e=>{this._disconnected||(em.log("Socket closed.",e),this._cleanup(),this._disconnected=!0,this.emit(ex.Disconnected))},this._socket.onopen=()=>{this._disconnected||(this._sendQueuedMessages(),em.log("Socket open"),this._scheduleHeartbeat())})}_scheduleHeartbeat(){this._wsPingTimer=setTimeout(()=>{this._sendHeartbeat()},this.pingInterval)}_sendHeartbeat(){if(!this._wsOpen())return void em.log("Cannot send heartbeat, because socket closed");let e=JSON.stringify({type:eD.Heartbeat});this._socket.send(e),this._scheduleHeartbeat()}_wsOpen(){return!!this._socket&&1===this._socket.readyState}_sendQueuedMessages(){let e=[...this._messagesQueue];for(let t of(this._messagesQueue=[],e))this.send(t)}send(e){if(this._disconnected)return;if(!this._id)return void this._messagesQueue.push(e);if(!e.type)return void this.emit(ex.Error,"Invalid message");if(!this._wsOpen())return;let t=JSON.stringify(e);this._socket.send(t)}close(){this._disconnected||(this._cleanup(),this._disconnected=!0)}_cleanup(){this._socket&&(this._socket.onopen=this._socket.onmessage=this._socket.onclose=null,this._socket.close(),this._socket=void 0),clearTimeout(this._wsPingTimer)}constructor(e,t,n,r,i,s=5e3){super(),this.pingInterval=s,this._disconnected=!0,this._messagesQueue=[],this._baseUrl=(e?"wss://":"ws://")+t+":"+n+r+"peerjs?key="+i}}class eO{startConnection(e){let t=this._startPeerConnection();if(this.connection.peerConnection=t,this.connection.type===ek.Media&&e._stream&&this._addTracksToConnection(e._stream,t),e.originator){let n=this.connection,r={ordered:!!e.reliable},i=t.createDataChannel(n.label,r);n._initializeDataChannel(i),this._makeOffer()}else this.handleSDP("OFFER",e.sdp)}_startPeerConnection(){em.log("Creating RTCPeerConnection.");let e=new RTCPeerConnection(this.connection.provider.options.config);return this._setupListeners(e),e}_setupListeners(e){let t=this.connection.peer,n=this.connection.connectionId,r=this.connection.type,i=this.connection.provider;em.log("Listening for ICE candidates."),e.onicecandidate=e=>{e.candidate&&e.candidate.candidate&&(em.log(`Received ICE candidates for ${t}:`,e.candidate),i.socket.send({type:eD.Candidate,payload:{candidate:e.candidate,type:r,connectionId:n},dst:t}))},e.oniceconnectionstatechange=()=>{switch(e.iceConnectionState){case"failed":em.log("iceConnectionState is failed, closing connections to "+t),this.connection.emitError(eP.NegotiationFailed,"Negotiation of connection to "+t+" failed."),this.connection.close();break;case"closed":em.log("iceConnectionState is closed, closing connections to "+t),this.connection.emitError(eP.ConnectionClosed,"Connection to "+t+" closed."),this.connection.close();break;case"disconnected":em.log("iceConnectionState changed to disconnected on the connection with "+t);break;case"completed":e.onicecandidate=()=>{}}this.connection.emit("iceStateChanged",e.iceConnectionState)},em.log("Listening for data channel"),e.ondatachannel=e=>{em.log("Received data channel");let r=e.channel;i.getConnection(t,n)._initializeDataChannel(r)},em.log("Listening for remote stream"),e.ontrack=e=>{em.log("Received remote stream");let r=e.streams[0],s=i.getConnection(t,n);s.type===ek.Media&&this._addStreamToMediaConnection(r,s)}}cleanup(){em.log("Cleaning up PeerConnection to "+this.connection.peer);let e=this.connection.peerConnection;if(!e)return;this.connection.peerConnection=null,e.onicecandidate=e.oniceconnectionstatechange=e.ondatachannel=e.ontrack=()=>{};let t="closed"!==e.signalingState,n=!1,r=this.connection.dataChannel;r&&(n=!!r.readyState&&"closed"!==r.readyState),(t||n)&&e.close()}async _makeOffer(){let e=this.connection.peerConnection,t=this.connection.provider;try{let n=await e.createOffer(this.connection.options.constraints);em.log("Created offer."),this.connection.options.sdpTransform&&"function"==typeof this.connection.options.sdpTransform&&(n.sdp=this.connection.options.sdpTransform(n.sdp)||n.sdp);try{await e.setLocalDescription(n),em.log("Set localDescription:",n,`for:${this.connection.peer}`);let r={sdp:n,type:this.connection.type,connectionId:this.connection.connectionId,metadata:this.connection.metadata};if(this.connection.type===ek.Data){let e=this.connection;r={...r,label:e.label,reliable:e.reliable,serialization:e.serialization}}t.socket.send({type:eD.Offer,payload:r,dst:this.connection.peer})}catch(e){"OperationError: Failed to set local offer sdp: Called in wrong state: kHaveRemoteOffer"!=e&&(t.emitError(eR.WebRTC,e),em.log("Failed to setLocalDescription, ",e))}}catch(e){t.emitError(eR.WebRTC,e),em.log("Failed to createOffer, ",e)}}async _makeAnswer(){let e=this.connection.peerConnection,t=this.connection.provider;try{let n=await e.createAnswer();em.log("Created answer."),this.connection.options.sdpTransform&&"function"==typeof this.connection.options.sdpTransform&&(n.sdp=this.connection.options.sdpTransform(n.sdp)||n.sdp);try{await e.setLocalDescription(n),em.log("Set localDescription:",n,`for:${this.connection.peer}`),t.socket.send({type:eD.Answer,payload:{sdp:n,type:this.connection.type,connectionId:this.connection.connectionId},dst:this.connection.peer})}catch(e){t.emitError(eR.WebRTC,e),em.log("Failed to setLocalDescription, ",e)}}catch(e){t.emitError(eR.WebRTC,e),em.log("Failed to create answer, ",e)}}async handleSDP(e,t){t=new RTCSessionDescription(t);let n=this.connection.peerConnection,r=this.connection.provider;em.log("Setting remote description",t);try{await n.setRemoteDescription(t),em.log(`Set remoteDescription:${e} for:${this.connection.peer}`),"OFFER"===e&&await this._makeAnswer()}catch(e){r.emitError(eR.WebRTC,e),em.log("Failed to setRemoteDescription, ",e)}}async handleCandidate(e){em.log("handleCandidate:",e);try{await this.connection.peerConnection.addIceCandidate(e),em.log(`Added ICE candidate for:${this.connection.peer}`)}catch(e){this.connection.provider.emitError(eR.WebRTC,e),em.log("Failed to handleCandidate, ",e)}}_addTracksToConnection(e,t){if(em.log(`add tracks from stream ${e.id} to peer connection`),!t.addTrack)return em.error("Your browser does't support RTCPeerConnection#addTrack. Ignored.");e.getTracks().forEach(n=>{t.addTrack(n,e)})}_addStreamToMediaConnection(e,t){em.log(`add stream ${e.id} to media connection ${t.connectionId}`),t.addStream(e)}constructor(e){this.connection=e}}class eL extends e_.EventEmitter{emitError(e,t){em.error("Error:",t),this.emit("error",new eA(`${e}`,t))}}class eA extends Error{constructor(e,t){"string"==typeof t?super(t):(super(),Object.assign(this,t)),this.type=e}}class ej extends eL{get open(){return this._open}constructor(e,t,n){super(),this.peer=e,this.provider=t,this.options=n,this._open=!1,this.metadata=n.metadata}}class eB extends ej{get type(){return ek.Media}get localStream(){return this._localStream}get remoteStream(){return this._remoteStream}_initializeDataChannel(e){this.dataChannel=e,this.dataChannel.onopen=()=>{em.log(`DC#${this.connectionId} dc connection success`),this.emit("willCloseOnRemote")},this.dataChannel.onclose=()=>{em.log(`DC#${this.connectionId} dc closed for:`,this.peer),this.close()}}addStream(e){em.log("Receiving stream",e),this._remoteStream=e,super.emit("stream",e)}handleMessage(e){let t=e.type,n=e.payload;switch(e.type){case eD.Answer:this._negotiator.handleSDP(t,n.sdp),this._open=!0;break;case eD.Candidate:this._negotiator.handleCandidate(n.candidate);break;default:em.warn(`Unrecognized message type:${t} from peer:${this.peer}`)}}answer(e,t={}){if(this._localStream)return void em.warn("Local stream already exists on this MediaConnection. Are you answering a call twice?");for(let n of(this._localStream=e,t&&t.sdpTransform&&(this.options.sdpTransform=t.sdpTransform),this._negotiator.startConnection({...this.options._payload,_stream:e}),this.provider._getMessages(this.connectionId)))this.handleMessage(n);this._open=!0}close(){this._negotiator&&(this._negotiator.cleanup(),this._negotiator=null),this._localStream=null,this._remoteStream=null,this.provider&&(this.provider._removeConnection(this),this.provider=null),this.options&&this.options._stream&&(this.options._stream=null),this.open&&(this._open=!1,super.emit("close"))}constructor(e,t,n){super(e,t,n),this._localStream=this.options._stream,this.connectionId=this.options.connectionId||eB.ID_PREFIX+ef.randomToken(),this._negotiator=new eO(this),this._localStream&&this._negotiator.startConnection({_stream:this._localStream,originator:!0})}}eB.ID_PREFIX="mc_";class eU{_buildRequest(e){let t=this._options.secure?"https":"http",{host:n,port:r,path:i,key:s}=this._options,o=new URL(`${t}://${n}:${r}${i}${s}/${e}`);return o.searchParams.set("ts",`${Date.now()}${Math.random()}`),o.searchParams.set("version",eI),fetch(o.href,{referrerPolicy:this._options.referrerPolicy})}async retrieveId(){try{let e=await this._buildRequest("id");if(200!==e.status)throw Error(`Error. Status:${e.status}`);return e.text()}catch(t){em.error("Error retrieving ID",t);let e="";throw"/"===this._options.path&&this._options.host!==ef.CLOUD_HOST&&(e=" If you passed in a `path` to your self-hosted PeerServer, you'll also need to pass in that same path when creating a new Peer."),Error("Could not get an ID from the server."+e)}}async listAllPeers(){try{let e=await this._buildRequest("peers");if(200!==e.status){if(401===e.status){let e="";throw e=this._options.host===ef.CLOUD_HOST?"It looks like you're using the cloud server. You can email team@peerjs.com to enable peer listing for your API key.":"You need to enable `allow_discovery` on your self-hosted PeerServer to use this feature.",Error("It doesn't look like you have permission to list peers IDs. "+e)}throw Error(`Error. Status:${e.status}`)}return e.json()}catch(e){throw em.error("Error retrieving list peers",e),Error("Could not get list peers from the server."+e)}}constructor(e){this._options=e}}class eF extends ej{get type(){return ek.Data}_initializeDataChannel(e){this.dataChannel=e,this.dataChannel.onopen=()=>{em.log(`DC#${this.connectionId} dc connection success`),this._open=!0,this.emit("open")},this.dataChannel.onmessage=e=>{em.log(`DC#${this.connectionId} dc onmessage:`,e.data)},this.dataChannel.onclose=()=>{em.log(`DC#${this.connectionId} dc closed for:`,this.peer),this.close()}}close(e){if(e?.flush)return void this.send({__peerData:{type:"close"}});this._negotiator&&(this._negotiator.cleanup(),this._negotiator=null),this.provider&&(this.provider._removeConnection(this),this.provider=null),this.dataChannel&&(this.dataChannel.onopen=null,this.dataChannel.onmessage=null,this.dataChannel.onclose=null,this.dataChannel=null),this.open&&(this._open=!1,super.emit("close"))}send(e,t=!1){return this.open?this._send(e,t):void this.emitError(ew.NotOpenYet,"Connection is not open. You should listen for the `open` event before sending messages.")}async handleMessage(e){let t=e.payload;switch(e.type){case eD.Answer:await this._negotiator.handleSDP(e.type,t.sdp);break;case eD.Candidate:await this._negotiator.handleCandidate(t.candidate);break;default:em.warn("Unrecognized message type:",e.type,"from peer:",this.peer)}}constructor(e,t,n){super(e,t,n),this.connectionId=this.options.connectionId||eF.ID_PREFIX+eh(),this.label=this.options.label||this.connectionId,this.reliable=!!this.options.reliable,this._negotiator=new eO(this),this._negotiator.startConnection(this.options._payload||{originator:!0,reliable:this.reliable})}}eF.ID_PREFIX="dc_",eF.MAX_BUFFERED_AMOUNT=8388608;class eN extends eF{get bufferSize(){return this._bufferSize}_initializeDataChannel(e){super._initializeDataChannel(e),this.dataChannel.binaryType="arraybuffer",this.dataChannel.addEventListener("message",e=>this._handleDataMessage(e))}_bufferedSend(e){(this._buffering||!this._trySend(e))&&(this._buffer.push(e),this._bufferSize=this._buffer.length)}_trySend(e){if(!this.open)return!1;if(this.dataChannel.bufferedAmount>eF.MAX_BUFFERED_AMOUNT)return this._buffering=!0,setTimeout(()=>{this._buffering=!1,this._tryBuffer()},50),!1;try{this.dataChannel.send(e)}catch(e){return em.error(`DC#:${this.connectionId} Error when sending:`,e),this._buffering=!0,this.close(),!1}return!0}_tryBuffer(){if(!this.open||0===this._buffer.length)return;let e=this._buffer[0];this._trySend(e)&&(this._buffer.shift(),this._bufferSize=this._buffer.length,this._tryBuffer())}close(e){if(e?.flush)return void this.send({__peerData:{type:"close"}});this._buffer=[],this._bufferSize=0,super.close()}constructor(...e){super(...e),this._buffer=[],this._bufferSize=0,this._buffering=!1}}class ez extends eN{close(e){super.close(e),this._chunkedData={}}_handleDataMessage({data:e}){let t=i(e),n=t.__peerData;if(n)return"close"===n.type?void this.close():void this._handleChunk(t);this.emit("data",t)}_handleChunk(e){let t=e.__peerData,n=this._chunkedData[t]||{data:[],count:0,total:e.total};if(n.data[e.n]=new Uint8Array(e.data),n.count++,this._chunkedData[t]=n,n.total===n.count){delete this._chunkedData[t];let e=function(e){let t=0;for(let n of e)t+=n.byteLength;let n=new Uint8Array(t),r=0;for(let t of e)n.set(t,r),r+=t.byteLength;return n}(n.data);this._handleDataMessage({data:e})}}_send(e,t){let n=s(e);return n instanceof Promise?this._send_blob(n):!t&&n.byteLength>this.chunker.chunkedMTU?void this._sendChunks(n):void this._bufferedSend(n)}async _send_blob(e){let t=await e;if(t.byteLength>this.chunker.chunkedMTU)return void this._sendChunks(t);this._bufferedSend(t)}_sendChunks(e){let t=this.chunker.chunk(e);for(let e of(em.log(`DC#${this.connectionId} Try to send ${t.length} chunks...`),t))this.send(e,!0)}constructor(e,t,r){super(e,t,r),this.chunker=new n,this.serialization=eE.Binary,this._chunkedData={}}}class e$ extends eN{_handleDataMessage({data:e}){super.emit("data",e)}_send(e,t){this._bufferedSend(e)}constructor(...e){super(...e),this.serialization=eE.None}}class eV extends eN{_handleDataMessage({data:e}){let t=this.parse(this.decoder.decode(e)),n=t.__peerData;if(n&&"close"===n.type)return void this.close();this.emit("data",t)}_send(e,t){let n=this.encoder.encode(this.stringify(e));if(n.byteLength>=ef.chunkedMTU)return void this.emitError(ew.MessageToBig,"Message too big for JSON channel");this._bufferedSend(n)}constructor(...e){super(...e),this.serialization=eE.JSON,this.encoder=new TextEncoder,this.decoder=new TextDecoder,this.stringify=JSON.stringify,this.parse=JSON.parse}}class eG extends eL{get id(){return this._id}get options(){return this._options}get open(){return this._open}get socket(){return this._socket}get connections(){let e=Object.create(null);for(let[t,n]of this._connections)e[t]=n;return e}get destroyed(){return this._destroyed}get disconnected(){return this._disconnected}_createServerConnection(){let e=new eM(this._options.secure,this._options.host,this._options.port,this._options.path,this._options.key,this._options.pingInterval);return e.on(ex.Message,e=>{this._handleMessage(e)}),e.on(ex.Error,e=>{this._abort(eR.SocketError,e)}),e.on(ex.Disconnected,()=>{this.disconnected||(this.emitError(eR.Network,"Lost connection to server."),this.disconnect())}),e.on(ex.Close,()=>{this.disconnected||this._abort(eR.SocketClosed,"Underlying socket is already closed.")}),e}_initialize(e){this._id=e,this.socket.start(e,this._options.token)}_handleMessage(e){let t=e.type,n=e.payload,r=e.src;switch(t){case eD.Open:this._lastServerId=this.id,this._open=!0,this.emit("open",this.id);break;case eD.Error:this._abort(eR.ServerError,n.msg);break;case eD.IdTaken:this._abort(eR.UnavailableID,`ID "${this.id}" is taken`);break;case eD.InvalidKey:this._abort(eR.InvalidKey,`API KEY "${this._options.key}" is invalid`);break;case eD.Leave:em.log(`Received leave message from ${r}`),this._cleanupPeer(r),this._connections.delete(r);break;case eD.Expire:this.emitError(eR.PeerUnavailable,`Could not connect to peer ${r}`);break;case eD.Offer:{let e=n.connectionId,t=this.getConnection(r,e);if(t&&(t.close(),em.warn(`Offer received for existing Connection ID:${e}`)),n.type===ek.Media){let i=new eB(r,this,{connectionId:e,_payload:n,metadata:n.metadata});t=i,this._addConnection(r,t),this.emit("call",i)}else{if(n.type!==ek.Data)return void em.warn(`Received malformed connection type:${n.type}`);let i=new this._serializers[n.serialization](r,this,{connectionId:e,_payload:n,metadata:n.metadata,label:n.label,serialization:n.serialization,reliable:n.reliable});t=i,this._addConnection(r,t),this.emit("connection",i)}for(let n of this._getMessages(e))t.handleMessage(n);break}default:{if(!n)return void em.warn(`You received a malformed message from ${r} of type ${t}`);let i=n.connectionId,s=this.getConnection(r,i);s&&s.peerConnection?s.handleMessage(e):i?this._storeMessage(i,e):em.warn("You received an unrecognized message:",e)}}}_storeMessage(e,t){this._lostMessages.has(e)||this._lostMessages.set(e,[]),this._lostMessages.get(e).push(t)}_getMessages(e){let t=this._lostMessages.get(e);return t?(this._lostMessages.delete(e),t):[]}connect(e,t={}){if(t={serialization:"default",...t},this.disconnected){em.warn("You cannot connect to a new Peer because you called .disconnect() on this Peer and ended your connection with the server. You can create a new Peer to reconnect, or call reconnect on this peer if you believe its ID to still be available."),this.emitError(eR.Disconnected,"Cannot connect to new Peer after disconnecting from server.");return}let n=new this._serializers[t.serialization](e,this,t);return this._addConnection(e,n),n}call(e,t,n={}){if(this.disconnected){em.warn("You cannot connect to a new Peer because you called .disconnect() on this Peer and ended your connection with the server. You can create a new Peer to reconnect."),this.emitError(eR.Disconnected,"Cannot connect to new Peer after disconnecting from server.");return}if(!t)return void em.error("To call a peer, you must provide a stream from your browser's `getUserMedia`.");let r=new eB(e,this,{...n,_stream:t});return this._addConnection(e,r),r}_addConnection(e,t){em.log(`add connection ${t.type}:${t.connectionId} to peerId:${e}`),this._connections.has(e)||this._connections.set(e,[]),this._connections.get(e).push(t)}_removeConnection(e){let t=this._connections.get(e.peer);if(t){let n=t.indexOf(e);-1!==n&&t.splice(n,1)}this._lostMessages.delete(e.connectionId)}getConnection(e,t){let n=this._connections.get(e);if(!n)return null;for(let e of n)if(e.connectionId===t)return e;return null}_delayedAbort(e,t){setTimeout(()=>{this._abort(e,t)},0)}_abort(e,t){em.error("Aborting!"),this.emitError(e,t),this._lastServerId?this.disconnect():this.destroy()}destroy(){this.destroyed||(em.log(`Destroy peer with ID:${this.id}`),this.disconnect(),this._cleanup(),this._destroyed=!0,this.emit("close"))}_cleanup(){for(let e of this._connections.keys())this._cleanupPeer(e),this._connections.delete(e);this.socket.removeAllListeners()}_cleanupPeer(e){let t=this._connections.get(e);if(t)for(let e of t)e.close()}disconnect(){if(this.disconnected)return;let e=this.id;em.log(`Disconnect peer with ID:${e}`),this._disconnected=!0,this._open=!1,this.socket.close(),this._lastServerId=e,this._id=null,this.emit("disconnected",e)}reconnect(){if(this.disconnected&&!this.destroyed)em.log(`Attempting reconnection to server with ID ${this._lastServerId}`),this._disconnected=!1,this._initialize(this._lastServerId);else if(this.destroyed)throw Error("This peer cannot reconnect to the server. It has already been destroyed.");else if(this.disconnected||this.open)throw Error(`Peer ${this.id} cannot reconnect because it is not disconnected from the server!`);else em.error("In a hurry? We're still trying to make the initial connection!")}listAllPeers(e=e=>{}){this._api.listAllPeers().then(t=>e(t)).catch(e=>this._abort(eR.ServerError,e))}constructor(e,t){let n;if(super(),this._serializers={raw:e$,json:eV,binary:ez,"binary-utf8":ez,default:ez},this._id=null,this._lastServerId=null,this._destroyed=!1,this._disconnected=!1,this._open=!1,this._connections=new Map,this._lostMessages=new Map,e&&e.constructor==Object?t=e:e&&(n=e.toString()),t={debug:0,host:ef.CLOUD_HOST,port:ef.CLOUD_PORT,path:"/",key:eG.DEFAULT_KEY,token:ef.randomToken(),config:ef.defaultConfig,referrerPolicy:"strict-origin-when-cross-origin",serializers:{},...t},this._options=t,this._serializers={...this._serializers,...this.options.serializers},"/"===this._options.host&&(this._options.host=window.location.hostname),this._options.path&&("/"!==this._options.path[0]&&(this._options.path="/"+this._options.path),"/"!==this._options.path[this._options.path.length-1]&&(this._options.path+="/")),void 0===this._options.secure&&this._options.host!==ef.CLOUD_HOST?this._options.secure=ef.isSecure():this._options.host==ef.CLOUD_HOST&&(this._options.secure=!0),this._options.logFunction&&em.setLogFunction(this._options.logFunction),em.logLevel=this._options.debug||0,this._api=new eU(t),this._socket=this._createServerConnection(),!ef.supports.audioVideo&&!ef.supports.data)return void this._delayedAbort(eR.BrowserIncompatible,"The current browser does not support WebRTC");if(n&&!ef.validateId(n))return void this._delayedAbort(eR.InvalidID,`ID "${n}" is invalid`);n?this._initialize(n):this._api.retrieveId().then(e=>this._initialize(e)).catch(e=>this._abort(eR.ServerError,e))}}eG.DEFAULT_KEY="peerjs",window.peerjs={Peer:eG,util:ef},window.Peer=eG})();
+//# sourceMappingURL=peerjs.min.js.map
+
+</script>
+<script>
+(() => {
+'use strict';
+const LABEL = '480 Collective';
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const money = (k) => {
+  const v = Math.round(k);
+  if (Math.abs(v) >= 1000) return (v < 0 ? '−' : '') + '$' + (Math.abs(v) / 1000).toFixed(2).replace(/\.?0+$/, '') + 'M';
+  return (v < 0 ? '−' : '') + '$' + Math.abs(v) + 'K';
+};
+
+// ---------------- Scenarios (money in $K) ----------------
+const SCENARIOS = {
+  juno: {
+    id: 'juno', name: 'Juno Vale', kind: 'Bedroom pop · Los Angeles',
+    blurb: 'A self-released EP went viral. 9 million monthly listeners, a sold-out first tour, and several labels calling.',
+    stats: [['Monthly listeners', '9.1M'], ['Leverage', 3]],
+    R: 2400, N: 900, T: 3000, S: 300, rec: 250, mkt: 600, maxAdv: 750,
+    give: 0.45, walkF: 0.4,
+    opening: { pts: 16, adv: 300, opt: 4, mast: 0, rerec: 7, non: 15, tour: 5, shel: 100, xc: 0, ai: 0, del: 0, prod: 0 },
+    priority: ['mast', 'opt', 'non', 'ai', 'xc', 'rerec', 'tour', 'shel', 'del', 'prod', 'adv', 'pts'],
+    artistBrief: [
+      'Juno cares most about owning her work and staying free to change course. She would trade some money for control of her masters and fewer option albums.',
+      'She tours constantly and wants to protect that income.',
+    ],
+    artistAlt: 'A rival major has sent Juno a real term sheet, and she can always keep self-releasing through a distributor. You may mention the rival offer — it’s true.',
+    labelIntel: 'Our sources say a rival major has issued Juno a term sheet. Assume they will mention it, and that it’s real.',
+    labelNote: 'The board will spend on Juno. Money is the easiest thing to give; long-term control is what the board is paying for.',
+  },
+  delta: {
+    id: 'delta', name: 'Delta Ray', kind: 'Hip-hop · Memphis',
+    blurb: 'A regional favorite with packed local shows and a street single climbing radio charts. An indie has floated a distribution deal.',
+    stats: [['Monthly listeners', '620K'], ['Leverage', 2]],
+    R: 900, N: 300, T: 700, S: 80, rec: 120, mkt: 250, maxAdv: 350,
+    give: 0.3, walkF: 0.25,
+    opening: { pts: 14, adv: 100, opt: 4, mast: 0, rerec: 7, non: 20, tour: 7, shel: 0, xc: 0, ai: 0, del: 0, prod: 0 },
+    priority: ['mast', 'non', 'opt', 'tour', 'xc', 'pts', 'ai', 'rerec', 'adv', 'shel', 'del', 'prod'],
+    artistBrief: [
+      'Delta needs a real advance to keep his crew and studio running, and touring is where he earns his living — protect it.',
+      'He would like to own his masters someday but knows that may be out of reach.',
+    ],
+    artistAlt: 'An indie label has offered Delta a distribution deal: much smaller money and marketing, but he would keep his masters. You may mention it — it’s true, but it’s not a major-label offer.',
+    labelIntel: 'We have heard an indie distributor is talking to Delta. It’s real, but it’s a small deal.',
+    labelNote: 'Delta is a solid bet, not a sure thing. Protect our catalog position and 360 participation.',
+  },
+  hollis: {
+    id: 'hollis', name: 'Hollis Ames', kind: 'Singer-songwriter · Minneapolis',
+    blurb: 'Great songs and a loyal local following. One A&R rep at 480 Collective believes in her. No one else has called.',
+    stats: [['Monthly listeners', '38K'], ['Leverage', 1]],
+    R: 300, N: 80, T: 150, S: 40, rec: 60, mkt: 120, maxAdv: 150,
+    give: 0.15, walkF: -0.4,
+    opening: { pts: 12, adv: 25, opt: 5, mast: 0, rerec: 10, non: 25, tour: 10, shel: 0, xc: 0, ai: 0, del: 0, prod: 0 },
+    priority: ['pts', 'non', 'mast', 'tour', 'opt', 'adv', 'xc', 'rerec', 'ai', 'shel', 'del', 'prod'],
+    artistBrief: [
+      'Hollis wants a start. She will accept a modest deal, but you must protect her from terms that could trap her: too many option albums, broad cross-collateralization, and default AI consent.',
+    ],
+    artistAlt: 'Hollis has no other offers. Her alternative is to keep self-releasing and playing clubs. If you claim a competing offer, you’re bluffing — and the label may know.',
+    labelIntel: 'We are confident no one else is pursuing Hollis. If her team mentions another offer, it’s almost certainly a bluff.',
+    labelNote: 'Hollis is a development risk. Keep the economics tight — but a deal that feels predatory can hurt our reputation with managers.',
+  },
+};
+
+const WHY = {
+  mast: 'Owning masters funds the next generation of signings.',
+  opt: 'We want to stay in business with the artist if they break.',
+  non: '360 income pays us back for building the brand.',
+  tour: 'Our marketing fills the venues.',
+  ai: 'AI licensing is a new business; we want flexibility across the catalog.',
+  xc: 'We need to recover our investment across everything we touch.',
+  rerec: 'New recordings can’t compete with the ones we paid for.',
+  pts: 'The royalty rate has to work with our marketing spend.',
+  adv: 'An advance is risk capital.',
+  shel: 'A high touring shelter wipes out our touring participation.',
+  del: 'We need a say in whether a record is ready.',
+  prod: 'Producer points are customarily the artist’s responsibility.',
+};
+
+function buildTerms(sc) {
+  const range = (a, b, s) => { const o = []; for (let v = a; v <= b + 1e-9; v += s) o.push(Math.round(v * 100) / 100); return o; };
+  return [
+    { id: 'pts', group: 'Money', name: 'Royalty', values: range(10, 20, 0.5), fmt: v => v + ' pts',
+      help: 'The artist’s share of what the label receives for sales and streams. New artists typically get 13–16 points at a major; superstars 18–20.', slide: 'Lecture: Artist Royalties' },
+    { id: 'adv', group: 'Money', name: 'Advance', values: range(0, sc.maxAdv, 25), fmt: money,
+      help: 'Cash up front — but recoupable. Every dollar is paid back out of the artist’s royalties before they see another cent.', slide: 'Lecture: Recoupment' },
+    { id: 'opt', group: 'Term', name: 'Option albums', values: [5, 4, 3, 2, 1, 0], fmt: v => v + (v === 1 ? ' album' : ' albums'),
+      help: 'Albums the label can demand at its election after the firm album. Options let a label drop an artist — or keep one locked in.', slide: 'Lecture: Terms of Deals' },
+    { id: 'mast', group: 'Rights', name: 'Masters', values: [0, 1, 2], fmt: v => ['Label owns forever', 'Revert in 15 yrs', 'Artist owns; 10-yr license'][v],
+      help: 'Who owns the recordings. Labels fund new artists with catalog income, so ownership is usually the hardest term to win.', slide: 'Lecture: Assignment & Reversion' },
+    { id: 'rerec', group: 'Rights', name: 'Re-record ban', values: [10, 9, 8, 7, 6, 5, 4, 3], fmt: v => v + ' yrs',
+      help: 'How long after the deal ends the artist can’t re-record these songs.', slide: 'Lecture: Master Licenses & Re-Recording' },
+    { id: 'non', group: '360', name: '360: other income', values: range(0, 25, 1).reverse(), fmt: v => v + '% net',
+      help: 'The label’s cut of net income from publishing, endorsements, acting and appearances. Most deals land at 10–20%.', slide: 'Lecture: 360 Rights' },
+    { id: 'tour', group: '360', name: '360: touring', values: range(0, 10, 0.5).reverse(), fmt: v => v + '% gross',
+      help: 'The label’s cut of gross touring income — before costs, and touring margins are thin.', slide: 'Lecture: 360 Rights' },
+    { id: 'shel', group: '360', name: 'Tour shelter', values: range(0, 500, 25), fmt: money,
+      help: 'Touring income the label doesn’t commission. The touring cut applies only above this amount.', slide: 'Lecture: 360 Rights' },
+    { id: 'xc', group: 'Fine print', name: 'Cross-collat', values: [0, 1], fmt: v => ['Broad', 'Album only'][v], opts: ['Broad', 'Album only'],
+      help: 'Broad cross-collateralization lets the label apply the artist’s other income — like their 50% sync share — to an unrecouped balance.', slide: 'Lecture: Cross Collateralization' },
+    { id: 'ai', group: 'Fine print', name: 'AI & voice', values: [0, 1], fmt: v => ['Default consent', 'Opt-in, paid'][v], opts: ['Default consent', 'Opt-in, paid'],
+      help: 'Whether the contract presumes consent to use the artist’s voice and likeness in AI products, or requires opt-in and separate pay.', slide: 'Lecture: AI & Voice Consent' },
+    { id: 'del', group: 'Fine print', name: 'Delivery', values: [0, 1], fmt: v => ['Commercially satisfactory', 'Technically satisfactory'][v], opts: ['Comm.', 'Tech.'],
+      help: 'Commercially satisfactory lets the label reject an album it doesn’t think will sell. Technically satisfactory means it must accept anything well-made.', slide: 'Lecture: Pay or Play & Delivery' },
+    { id: 'prod', group: 'Fine print', name: 'Producer pts', values: [0, 1], fmt: v => ['Artist pays', 'Label pays while unrecouped'][v], opts: ['Artist pays', 'Label pays'],
+      help: 'Who covers the producer’s 3 points. If the artist pays, the producer’s royalty is charged to the artist’s account and slows recoupment.', slide: 'Lecture: Producer Agreements' },
+  ];
+}
+
+// ---------------- Economics ----------------
+const MASTER_LABEL = [0.25, 0.12, 0.03];
+const MASTER_ARTIST = [0, 0.12, 0.3];
+function econ(t, sc, m = { R: 1, N: 1, T: 1 }) {
+  const R = sc.R * m.R, N = sc.N * m.N, T = sc.T * m.T, S = sc.S * m.R;
+  const prod = 0.03 * R;
+  const recoup = t.adv + sc.rec + (t.prod === 0 ? prod : 0);
+  const roy = t.pts / 100 * R;
+  const royPaid = Math.max(0, roy - recoup);
+  const deficit = Math.max(0, recoup - roy);
+  const syncHalf = 0.5 * S;
+  const applied = t.xc === 0 ? Math.min(deficit, syncHalf) : 0;
+  const tourBase = Math.max(0, T - t.shel);
+  const label360 = t.non / 100 * N + t.tour / 100 * tourBase;
+  const aiLabel = t.ai === 0 ? 0.02 * R : 0.01 * R;
+  const aiArtist = t.ai === 0 ? 0 : 0.01 * R;
+  const labelCash = R - prod - royPaid - t.adv - sc.rec - sc.mkt + syncHalf + applied + label360 + aiLabel;
+  const artistCash = t.adv + royPaid + (syncHalf - applied) + N * (1 - t.non / 100) + 0.35 * T - t.tour / 100 * tourBase + aiArtist;
+  const R0 = sc.R;
+  const labelFuture = MASTER_LABEL[t.mast] * R0 + t.opt * 0.05 * R0 + (t.rerec - 3) * 0.008 * R0 + (t.del === 0 ? 0.015 * R0 : 0);
+  const artistFuture = MASTER_ARTIST[t.mast] * R0 + (5 - t.opt) * 0.03 * R0 + (10 - t.rerec) * 0.006 * R0 + (t.del === 1 ? 0.01 * R0 : 0);
+  return { R, roy, recoup, royPaid, deficit, applied, unrecouped: deficit - applied, label360, labelCash, artistCash, labelFuture, artistFuture };
+}
+const CASES = [[0.25, { R: 0.35, N: 0.6, T: 0.5 }], [0.5, { R: 1, N: 1, T: 1 }], [0.25, { R: 2.5, N: 2, T: 2.2 }]];
+const LV = (t, sc) => { let v = 0; CASES.forEach(([w, m]) => { v += w * econ(t, sc, m).labelCash; }); return v + econ(t, sc).labelFuture - 0.15 * t.adv; };
+const AV = (t, sc) => { let v = 0; CASES.forEach(([w, m]) => { v += w * econ(t, sc, m).artistCash; }); return v + econ(t, sc).artistFuture; };
+
+// ---------------- Per-scenario precompute ----------------
+const P = {};
+Object.values(SCENARIOS).forEach(sc => {
+  const TERMS = buildTerms(sc);
+  const TMAP = Object.fromEntries(TERMS.map(t => [t.id, t]));
+  const idxOf = (term, v) => { let best = 0, d = Infinity; term.values.forEach((x, i) => { const dd = Math.abs(x - v); if (dd < d) { d = dd; best = i; } }); return best; };
+  const toT = (idx) => { const o = {}; TERMS.forEach(t => { o[t.id] = t.values[idx[t.id]]; }); return o; };
+  const lv = (idx) => LV(toT(idx), sc), av = (idx) => AV(toT(idx), sc);
+  const openIdx = {}; TERMS.forEach(t => { openIdx[t.id] = idxOf(t, sc.opening[t.id]); });
+  const artistMost = {}, labelMost = {};
+  TERMS.forEach(t => { artistMost[t.id] = t.values.length - 1; labelMost[t.id] = 0; });
+  const L0 = lv(openIdx), Lmin = lv(artistMost);
+  const target = L0 - sc.give * (L0 - Lmin);
+  // best artist package the label would sign (greedy)
+  const bestArtist = { ...artistMost };
+  for (let g = 0; g < 800 && lv(bestArtist) < target; g++) {
+    let pick = null, score = -Infinity;
+    TERMS.forEach(t => { if (bestArtist[t.id] === 0) return; const n = { ...bestArtist, [t.id]: bestArtist[t.id] - 1 }; const dL = lv(n) - lv(bestArtist), dA = av(bestArtist) - av(n); if (dL <= 0) return; const s = dL / Math.max(dA, 0.01); if (s > score) { score = s; pick = n; } });
+    if (!pick) break; Object.assign(bestArtist, pick);
+  }
+  const AVopen = av(openIdx), AVbest = av(bestArtist);
+  const AVwalk = AVopen + sc.walkF * (AVbest - AVopen);
+  // best label package the artist would sign (greedy)
+  const bestLabel = { ...labelMost };
+  for (let g = 0; g < 800 && av(bestLabel) < AVwalk; g++) {
+    let pick = null, score = -Infinity;
+    TERMS.forEach(t => { if (bestLabel[t.id] === t.values.length - 1) return; const n = { ...bestLabel, [t.id]: bestLabel[t.id] + 1 }; const dA = av(n) - av(bestLabel), dL = lv(bestLabel) - lv(n); if (dA <= 0) return; const s = dA / Math.max(dL, 0.01); if (s > score) { score = s; pick = n; } });
+    if (!pick) break; Object.assign(bestLabel, pick);
+  }
+  const LVbest = Math.max(lv(bestLabel), target + 1);
+  P[sc.id] = { sc, TERMS, TMAP, toT, lv, av, openIdx, L0, Lmin, target, AVopen, AVbest, AVwalk, LVbest,
+    AVlo: Math.min(av(labelMost), AVwalk), AVhi: av(artistMost), LVlo: Lmin, LVhi: Math.max(lv(labelMost), L0) };
+});
+
+// ---------------- App state ----------------
+const app = {
+  mode: null, code: null, game: null, side: null, draft: null, sel: 'pts', seenRev: -1,
+  busy: false, briefSeen: {}, newClient: 'hollis', newSide: 'artist', localClient: 'hollis', handoffFor: null,
+};
+const VIEWS = ['home', 'lobby', 'play', 'results', 'board'];
+function show(v) { VIEWS.forEach(x => $(x).classList.toggle('hidden', x !== v)); window.scrollTo({ top: 0 }); }
+function toast(t) { const el = $('toast'); el.textContent = t; el.classList.remove('hidden'); clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.add('hidden'), 3000); }
+const other = (s) => s === 'artist' ? 'label' : 'artist';
+const sideName = (s) => s === 'artist' ? 'Artist team' : LABEL;
+const clone = (o) => JSON.parse(JSON.stringify(o));
+const store = {
+  get(k) { try { const v = localStorage.getItem('dealdesk.' + k); return v ? JSON.parse(v) : null; } catch (_) { return null; } },
+  set(k, v) { try { localStorage.setItem('dealdesk.' + k, JSON.stringify(v)); } catch (_) {} },
+  del(k) { try { localStorage.removeItem('dealdesk.' + k); } catch (_) {} },
+};
+const TOKEN = (() => { let t = store.get('token'); if (!t) { t = Math.random().toString(36).slice(2) + Date.now().toString(36); store.set('token', t); } return t; })();
+
+// ---------------- Home ----------------
+function segment(el, items, get, set) {
+  el.innerHTML = '';
+  items.forEach(([v, label]) => {
+    const b = document.createElement('button'); b.type = 'button'; b.textContent = label; b.dataset.v = v;
+    b.setAttribute('aria-pressed', String(get() === v));
+    b.addEventListener('click', () => { set(v); el.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.v === v))); });
+    el.appendChild(b);
+  });
+}
+function renderHome() {
+  const clientItems = Object.values(SCENARIOS).map(c => [c.id, c.name]);
+  segment($('newClient'), clientItems, () => app.newClient, v => { app.newClient = v; });
+  segment($('localClient'), clientItems, () => app.localClient, v => { app.localClient = v; });
+  $('newSide').querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+    app.newSide = b.dataset.v; $('newSide').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  }));
+  const box = $('clients'); box.innerHTML = '';
+  Object.values(SCENARIOS).forEach(c => {
+    const d = document.createElement('div'); d.className = 'client'; d.style.cursor = 'default';
+    const lev = c.stats[1][1];
+    d.innerHTML = `<div><h3>${c.name}</h3><div class="kind">${c.kind}</div></div><p>${c.blurb}</p>
+      <dl><dt>${c.stats[0][0]}</dt><dd>${c.stats[0][1]}</dd><dt>Leverage</dt><dd><span class="lev" aria-label="${lev} of 3">${[1, 2, 3].map(i => `<i class="${i <= lev ? 'on' : ''}"></i>`).join('')}</span></dd></dl>`;
+    box.appendChild(d);
+  });
+  renderResume();
+}
+function renderResume() {
+  const h = store.get('host'), gst = store.get('guest');
+  const box = $('resumeBox');
+  const live = (h && h.game && (h.game.status === 'lobby' || h.game.status === 'negotiating')) ? h : null;
+  if (!live && !gst) { box.classList.add('hidden'); return; }
+  box.classList.remove('hidden');
+  const parts = [];
+  if (live) parts.push(`<button class="btn primary" type="button" id="resumeHost" style="grid-column:auto">Resume game ${esc(live.code)} (you started it)</button>`);
+  if (gst) parts.push(`<button class="btn" type="button" id="resumeGuest">Rejoin game ${esc(gst.code)}</button>`);
+  parts.push(`<button class="linkbtn" type="button" id="resumeForget">Forget</button>`);
+  $('resumeBtns').innerHTML = parts.join('');
+  if (live) $('resumeHost').onclick = () => hostStart(live.code, live.game, live.classCode);
+  if (gst) $('resumeGuest').onclick = () => guestJoin(gst.code, gst.team);
+  $('resumeForget').onclick = () => { store.del('host'); store.del('guest'); renderResume(); };
+}
+
+// ---------------- Networking (PeerJS, peer-to-peer) ----------------
+// The team that starts a game hosts it in its browser and is the source of truth.
+// The other team connects directly with the four-letter code.
+const PREFIX = 'dealdesk-480c-v2-';
+const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+const newCode = (n = 4) => Array.from({ length: n }, () => CODE_CHARS[Math.floor(Math.random() * CODE_CHARS.length)]).join('');
+const net = { peer: null, role: null, conns: new Map(), hostConn: null, classConn: null, classCode: null, retry: null, tries: 0, closing: false };
+
+function freshGame(code, scenario) {
+  return { code, scenario, createdAt: Date.now(), status: 'lobby', sides: { artist: null, label: null },
+    turn: 'label', round: 0, final: false, current: null, history: [], rev: 0, deal: null, endedBy: null };
+}
+function setConn(state, text) {
+  const pill = $('connPill');
+  pill.className = 'connpill ' + state; pill.textContent = text;
+  pill.classList.toggle('hidden', app.mode !== 'online');
+}
+function peerAvailable() { return typeof window.Peer === 'function'; }
+function teardown() {
+  net.closing = true;
+  clearTimeout(net.retry);
+  try { if (net.peer) net.peer.destroy(); } catch (_) {}
+  net.peer = null; net.role = null; net.conns = new Map(); net.hostConn = null; net.classConn = null; net.classPending = false; net.tries = 0;
+  setTimeout(() => { net.closing = false; }, 0);
+}
+function peerErrorText(e) {
+  const t = e && e.type;
+  if (t === 'browser-incompatible') return 'This browser can’t make direct connections. Try Chrome, Edge, Firefox or Safari — or use one-screen mode.';
+  if (t === 'network' || t === 'server-error' || t === 'socket-error' || t === 'socket-closed') return 'Couldn’t reach the connection server. Check the internet connection, or use one-screen mode.';
+  return 'Connection problem. Try again, or use one-screen mode.';
+}
+
+// ---- Host ----
+function createOnline() {
+  const team = $('newTeam').value.trim();
+  const classCode = $('newClass').value.trim().toUpperCase();
+  $('newErr').textContent = '';
+  if (!team) { $('newErr').textContent = 'Enter a team name so the other team knows who you are.'; return; }
+  if (classCode && !/^[A-Z]{5}$/.test(classCode)) { $('newErr').textContent = 'Class codes are five letters. Leave it blank if your instructor didn’t give you one.'; return; }
+  if (!peerAvailable()) { $('newErr').textContent = 'Online play couldn’t load. Use one-screen mode.'; return; }
+  const g = freshGame(null, app.newClient);
+  g.sides[app.newSide] = { uid: TOKEN, team };
+  store.del('guest');
+  hostStart(null, g, classCode || null);
+}
+
+function hostStart(code, game, classCode, attempt = 0) {
+  teardown();
+  app.mode = 'online'; net.role = 'host'; net.classCode = classCode;
+  const myCode = code || newCode();
+  $('createBtn').disabled = true;
+  setConn('wait', 'Connecting…');
+  const peer = new Peer(PREFIX + myCode, { debug: 0 });
+  net.peer = peer;
+  peer.on('open', () => {
+    $('createBtn').disabled = false;
+    game.code = myCode;
+    app.code = myCode;
+    app.seenRev = -1;
+    setHostGame(game, false);
+    setConn(net.conns.size ? 'ok' : 'wait', net.conns.size ? 'Other team connected' : 'Waiting for the other team');
+  });
+  peer.on('connection', conn => {
+    conn.on('data', d => onHostData(conn, d));
+    conn.on('close', () => { net.conns.delete(conn); hostConnStatus(); });
+    conn.on('error', () => { net.conns.delete(conn); hostConnStatus(); });
+  });
+  peer.on('disconnected', () => { if (!net.closing && net.peer === peer) { try { peer.reconnect(); } catch (_) {} } });
+  peer.on('error', e => {
+    if (net.peer !== peer) return;
+    if (e.type === 'unavailable-id') {
+      if (code && attempt < 12) { setConn('wait', 'Reclaiming your game code…'); net.retry = setTimeout(() => hostStart(code, game, classCode, attempt + 1), 2500); return; }
+      if (!code && attempt < 5) { hostStart(null, game, classCode, attempt + 1); return; }
+      toast('That game code is still in use. Start a new game.');
+      $('createBtn').disabled = false; leaveGame(); return;
+    }
+    if (e.type === 'peer-unavailable') { // class dashboard not open
+      if (net.classCode) toast('Your instructor’s dashboard isn’t open. The game will still work.');
+      return;
+    }
+    $('createBtn').disabled = false;
+    if (!app.game || !app.game.code) { $('newErr').textContent = peerErrorText(e); leaveGame(); }
+    else { setConn('bad', 'Connection problem — retrying'); }
+  });
+}
+function hostConnStatus() {
+  if (net.role !== 'host') return;
+  const n = [...net.conns.keys()].filter(c => c.open).length;
+  const g = app.game;
+  const other = g && ['artist', 'label'].find(s => g.sides[s] && g.sides[s].uid !== TOKEN);
+  setConn(n ? 'ok' : (other ? 'bad' : 'wait'), n ? 'Other team connected' : other ? `Other team disconnected — they can rejoin with code ${g.code}` : 'Waiting for the other team');
+}
+function setHostGame(g, bump = true) {
+  if (bump) g.rev = (g.rev || 0) + 1;
+  app.game = g;
+  app.side = ['artist', 'label'].find(s => g.sides[s] && g.sides[s].uid === TOKEN) || null;
+  store.set('host', { code: g.code, game: g, classCode: net.classCode });
+  net.conns.forEach((tok, c) => { if (c.open) c.send({ type: 'state', game: g }); });
+  reportToClass();
+  route();
+}
+function onHostData(conn, d) {
+  if (!d || typeof d !== 'object') return;
+  const g = app.game; if (!g) return;
+  if (d.type === 'join') {
+    const token = String(d.token || '').slice(0, 64);
+    const team = String(d.team || '').trim().slice(0, 40) || 'Team';
+    net.conns.set(conn, token);
+    let side = ['artist', 'label'].find(s => g.sides[s] && g.sides[s].uid === token);
+    if (!side) {
+      const open = ['artist', 'label'].find(s => !g.sides[s]);
+      if (open) {
+        const ng = clone(g); ng.sides[open] = { uid: token, team };
+        if (ng.sides.artist && ng.sides.label && ng.status === 'lobby') ng.status = 'negotiating';
+        conn.send({ type: 'welcome', side: open });
+        setHostGame(ng);
+        hostConnStatus();
+        return;
+      }
+    }
+    conn.send({ type: 'welcome', side: side || null });
+    conn.send({ type: 'state', game: g });
+    hostConnStatus();
+    return;
+  }
+  if (d.type === 'action') {
+    const token = net.conns.get(conn);
+    const side = ['artist', 'label'].find(s => g.sides[s] && g.sides[s].uid === token);
+    if (!side) return;
+    const ng = reduce(g, side, d.action);
+    if (ng) setHostGame(ng);
+    else conn.send({ type: 'state', game: g });
+  }
+}
+
+// ---- Guest ----
+function joinOnline() {
+  const code = $('joinCode').value.trim().toUpperCase();
+  const team = $('joinTeam').value.trim();
+  $('joinErr').textContent = '';
+  if (!/^[A-Z]{4}$/.test(code)) { $('joinErr').textContent = 'Game codes are four letters.'; return; }
+  if (!team) { $('joinErr').textContent = 'Enter a team name.'; return; }
+  if (!peerAvailable()) { $('joinErr').textContent = 'Online play couldn’t load. Use one-screen mode.'; return; }
+  store.del('host');
+  guestJoin(code, team);
+}
+function guestJoin(code, team) {
+  teardown();
+  app.mode = 'online'; net.role = 'guest'; app.code = code; app.seenRev = -1;
+  store.set('guest', { code, team });
+  $('joinBtn').disabled = true;
+  setConn('wait', 'Connecting…');
+  const peer = new Peer({ debug: 0 });
+  net.peer = peer;
+  let welcomed = false;
+  const failTimer = setTimeout(() => { if (!welcomed && net.peer === peer) { $('joinErr').textContent = 'Couldn’t reach that game. Check the code, and make sure the other team’s page is still open.'; $('joinBtn').disabled = false; leaveGame(true); } }, 15000);
+  const connect = () => {
+    const conn = peer.connect(PREFIX + code, { reliable: true });
+    net.hostConn = conn;
+    conn.on('open', () => { conn.send({ type: 'join', token: TOKEN, team }); });
+    conn.on('data', d => {
+      if (!d || typeof d !== 'object') return;
+      if (d.type === 'welcome') { welcomed = true; clearTimeout(failTimer); $('joinBtn').disabled = false; net.tries = 0; setConn('ok', 'Connected to the other team'); if (!d.side) toast('Both sides are taken — you’re watching this game.'); }
+      if (d.type === 'state' && d.game) {
+        app.game = d.game;
+        app.side = ['artist', 'label'].find(s => d.game.sides[s] && d.game.sides[s].uid === TOKEN) || null;
+        app.busy = false;
+        if (d.game.status === 'closed' || d.game.status === 'nodeal') store.del('guest');
+        route();
+      }
+    });
+    conn.on('close', () => {
+      if (net.peer !== peer || net.closing || !welcomed) return;
+      if (app.game && (app.game.status === 'closed' || app.game.status === 'nodeal')) { setConn('wait', 'Game over'); return; }
+      setConn('bad', 'Lost connection — reconnecting…');
+      if (net.tries++ < 40) net.retry = setTimeout(connect, 3000);
+    });
+  };
+  peer.on('open', connect);
+  peer.on('disconnected', () => { if (!net.closing && net.peer === peer) { try { peer.reconnect(); } catch (_) {} } });
+  peer.on('error', e => {
+    if (net.peer !== peer) return;
+    if (e.type === 'peer-unavailable') {
+      if (!welcomed) { clearTimeout(failTimer); $('joinErr').textContent = 'No game with that code is open. Check the letters, and make sure the other team’s page is still open.'; $('joinBtn').disabled = false; leaveGame(true); }
+      else { setConn('bad', 'The other team’s page is closed — waiting for them to come back…'); if (net.tries++ < 40) net.retry = setTimeout(connect, 3000); }
+      return;
+    }
+    if (!welcomed) { clearTimeout(failTimer); $('joinErr').textContent = peerErrorText(e); $('joinBtn').disabled = false; leaveGame(true); }
+    else setConn('bad', 'Connection problem — retrying…');
+  });
+}
+
+// ---- Class dashboard link (host side) ----
+function connectClass() {
+  if (!net.classCode || !net.peer || net.role !== 'host') return;
+  if (net.classConn && (net.classConn.open || net.classPending)) return;
+  net.classPending = true;
+  const conn = net.peer.connect(PREFIX + 'class-' + net.classCode, { reliable: true });
+  net.classConn = conn;
+  const done = () => { if (net.classConn === conn) net.classPending = false; };
+  conn.on('open', () => { done(); if (app.game && app.game.code) conn.send({ type: 'report', game: app.game }); });
+  conn.on('close', () => { done(); if (net.classConn === conn) net.classConn = null; });
+  conn.on('error', () => { done(); if (net.classConn === conn) net.classConn = null; });
+  setTimeout(() => { if (!conn.open && net.classConn === conn) { net.classPending = false; net.classConn = null; } }, 10000);
+}
+function reportToClass() {
+  if (!net.classCode || net.role !== 'host' || !app.game || !app.game.code) return;
+  if (net.classConn && net.classConn.open) net.classConn.send({ type: 'report', game: app.game });
+  else connectClass();
+}
+
+function leaveGame(keepHome) {
+  teardown();
+  app.mode = null; app.game = null; app.code = null; app.side = null;
+  $('handoff').classList.add('hidden');
+  setConn('wait', '');
+  renderResume();
+  show('home');
+}
+
+// ---------------- Rules (shared by host and one-screen mode) ----------------
+function validTerms(p, t) {
+  if (!t || typeof t !== 'object') return null;
+  const o = {};
+  for (const term of p.TERMS) { const v = t[term.id]; if (!Number.isInteger(v) || v < 0 || v >= term.values.length) return null; o[term.id] = v; }
+  return o;
+}
+function reduce(g0, side, act) {
+  if (!act || g0.status !== 'negotiating') return null;
+  const g = clone(g0), p = P[g.scenario];
+  const note = String(act.note || '').trim().slice(0, 400);
+  if (act.type === 'walk') {
+    g.history.push({ side, kind: 'walk', note, at: Date.now() });
+    g.status = 'nodeal'; g.endedBy = side; g.endedAt = Date.now();
+    return g;
+  }
+  if (g.turn !== side) return null;
+  if (act.type === 'offer') {
+    if (g.final && side === 'artist') return null;
+    const terms = validTerms(p, act.terms); if (!terms) return null;
+    if (side === 'artist') g.round += 1;
+    const final = side === 'label' && g.round >= 6;
+    g.history.push({ side, kind: 'offer', terms, note, round: g.round, final, at: Date.now() });
+    g.current = { by: side, terms };
+    g.final = final;
+    g.turn = other(side);
+    return g;
+  }
+  if (act.type === 'accept') {
+    if (!g.current || g.current.by === side) return null;
+    g.history.push({ side, kind: 'accept', at: Date.now() });
+    g.status = 'closed'; g.deal = { ...g.current.terms }; g.endedBy = side; g.endedAt = Date.now();
+    return g;
+  }
+  return null;
+}
+
+
+// ---------------- Local mode ----------------
+function startLocal() {
+  app.mode = 'local';
+  app.briefSeen = {};
+  const g = freshGame('LOCAL', app.localClient);
+  g.sides = { artist: { uid: 'local', team: 'Artist team' }, label: { uid: 'local', team: LABEL } };
+  g.status = 'negotiating';
+  app.game = g; app.seenRev = -1; app.side = 'label';
+  app.handoffFor = 'label';
+  route();
+}
+
+// ---------------- Routing ----------------
+function route() {
+  const g = app.game; if (!g) return;
+  if (app.mode === 'local') app.side = g.turn;
+  if (g.status === 'lobby') { renderLobby(); show('lobby'); return; }
+  if (g.status === 'closed' || g.status === 'nodeal') { $('handoff').classList.add('hidden'); renderResults(g, false); show('results'); return; }
+  if ($('play').classList.contains('hidden')) show('play');
+  renderPlay();
+  if (app.mode === 'local' && app.handoffFor) {
+    $('handoffTitle').textContent = `Pass the device to ${sideName(app.handoffFor)}.`;
+    $('handoffText').textContent = app.handoffFor === 'label' && g.history.length === 0 ? `${LABEL} makes the opening offer. The artist team should look away while the label reads its brief.` : `It’s the ${app.handoffFor === 'label' ? 'label’s' : 'artist team’s'} turn. The other team should look away from the screen.`;
+    $('handoffBtn').textContent = `We’re ${app.handoffFor === 'label' ? LABEL : 'the artist team'} — show our desk`;
+    $('handoff').classList.remove('hidden');
+  }
+}
+
+function renderLobby() {
+  const g = app.game, sc = SCENARIOS[g.scenario];
+  $('lobbyCode').textContent = g.code;
+  $('lobbyText').textContent = `${sc.name} · waiting for the other team to join with this code.`;
+  $('lobbyTeams').innerHTML = ['artist', 'label'].map(s => `<div class="team ${s}"><div class="role">${sideName(s)}</div><div class="tname ${g.sides[s] ? '' : 'empty'}">${g.sides[s] ? esc(g.sides[s].team) : 'Waiting…'}</div></div>`).join('');
+}
+
+// ---------------- Console ----------------
+let builtFor = null;
+function buildConsole(p) {
+  builtFor = p.sc.id;
+  const heads = $('groupHeads'); heads.innerHTML = '';
+  const strips = $('strips'); strips.innerHTML = '';
+  let g = null, span = 0, start = 1;
+  const flush = () => { if (g) { const d = document.createElement('div'); d.className = 'group-name'; d.textContent = g; d.style.gridColumn = `${start} / span ${span}`; heads.appendChild(d); } };
+  p.TERMS.forEach((t, i) => { if (t.group !== g) { flush(); g = t.group; span = 0; start = i + 1; } span++; });
+  flush();
+  p.TERMS.forEach(t => {
+    const s = document.createElement('div'); s.className = 'strip'; s.id = 'strip-' + t.id;
+    const ro = document.createElement('div'); ro.className = 'readout'; ro.id = 'ro-' + t.id; s.appendChild(ro);
+    if (t.opts) {
+      const sw = document.createElement('div'); sw.className = 'switch'; sw.setAttribute('role', 'group'); sw.setAttribute('aria-label', t.name);
+      t.opts.forEach((label, vi) => {
+        const b = document.createElement('button'); b.type = 'button'; b.textContent = label; b.dataset.v = vi;
+        b.addEventListener('click', () => { app.draft[t.id] = vi; select(t.id); paint(); });
+        sw.appendChild(b);
+      });
+      [...sw.children].reverse().forEach(c => sw.appendChild(c));
+      s.appendChild(sw);
+    } else {
+      const fw = document.createElement('div'); fw.className = 'fader-wrap';
+      const ticks = document.createElement('div'); ticks.className = 'ticks'; fw.appendChild(ticks);
+      const gh = document.createElement('div'); gh.className = 'ghost'; gh.id = 'gh-' + t.id; fw.appendChild(gh);
+      const inp = document.createElement('input'); inp.type = 'range'; inp.className = 'fader'; inp.id = 'f-' + t.id;
+      inp.min = 0; inp.max = t.values.length - 1; inp.step = 1;
+      inp.setAttribute('aria-label', t.name + ' (higher favors the artist)');
+      inp.addEventListener('input', () => { app.draft[t.id] = +inp.value; select(t.id); paint(); });
+      inp.addEventListener('focus', () => select(t.id));
+      fw.appendChild(inp); s.appendChild(fw);
+    }
+    const sb = document.createElement('button'); sb.type = 'button'; sb.className = 'scribble'; sb.textContent = t.name;
+    sb.addEventListener('click', () => select(t.id));
+    s.appendChild(sb);
+    strips.appendChild(s);
+  });
+}
+function select(id) { app.sel = id; paintInspector(); }
+
+function lastOfferBy(g, side) { for (let i = g.history.length - 1; i >= 0; i--) { const h = g.history[i]; if (h.kind === 'offer' && h.side === side) return h.terms; } return null; }
+
+function canAct() {
+  const g = app.game;
+  return g && g.status === 'negotiating' && app.side && g.turn === app.side;
+}
+
+function renderPlay() {
+  const g = app.game, p = P[g.scenario];
+  if (builtFor !== p.sc.id) buildConsole(p);
+  if (g.rev !== app.seenRev) {
+    app.seenRev = g.rev;
+    app.draft = g.current ? { ...g.current.terms } : { ...p.openIdx };
+    $('noteInput').value = '';
+  }
+  $('clientName').textContent = p.sc.name;
+  const badge = $('sideBadge');
+  if (app.side) { badge.textContent = app.mode === 'local' ? sideName(app.side) + ' at the desk' : 'You: ' + sideName(app.side); badge.className = 'sidebadge ' + app.side; }
+  else { badge.textContent = 'Watching'; badge.className = 'sidebadge'; badge.style.background = 'var(--muted)'; }
+  const at = g.sides.artist ? g.sides.artist.team : '—', lt = g.sides.label ? g.sides.label.team : '—';
+  $('matchup').textContent = app.mode === 'local' ? `${p.sc.kind} · one-screen game` : `${p.sc.kind} · ${at} (artist) vs. ${lt} (${LABEL}) · Code ${g.code}`;
+  $('roundNum').textContent = g.round;
+  $('briefBtn').disabled = !app.side;
+  // turn banner
+  const tb = $('turnBanner');
+  if (!app.side) { tb.className = 'turnbanner wait'; tb.textContent = `Watching. It’s ${sideName(g.turn)}’s turn.`; }
+  else if (g.turn === app.side) {
+    if (g.final && app.side === 'artist') { tb.className = 'turnbanner final'; tb.textContent = `${LABEL} has made its final offer. Accept it or walk away.`; }
+    else if (!g.current) { tb.className = 'turnbanner mine'; tb.textContent = 'Your turn: set your opening offer and send it. Read your confidential brief first.'; }
+    else { tb.className = 'turnbanner mine'; tb.textContent = `Your turn. ${sideName(other(app.side))}’s offer is on the console — accept it, or change the terms and counter.`; }
+  } else { tb.className = 'turnbanner wait'; tb.textContent = `Waiting for ${sideName(g.turn)} to respond…`; }
+  $('legendTheirs').textContent = app.side ? `${sideName(other(app.side))}’s last offer` : 'Last offer';
+  paint();
+  renderMail();
+  if (app.mode === 'online' && app.side && g.status === 'negotiating' && !app.briefSeen[app.code + ':' + app.side]) openBrief();
+}
+
+function paint() {
+  const g = app.game, p = P[g.scenario];
+  const act = canAct();
+  const finalLock = g.final && app.side === 'artist';
+  const theirs = app.side ? lastOfferBy(g, other(app.side)) : (g.current ? g.current.terms : null);
+  p.TERMS.forEach(t => {
+    const v = app.draft[t.id];
+    $('ro-' + t.id).textContent = t.fmt(t.values[v]);
+    $('strip-' + t.id).classList.toggle('changed', !!theirs && v !== theirs[t.id]);
+    $('strip-' + t.id).classList.toggle('sel', t.id === app.sel);
+    if (t.opts) {
+      $('strip-' + t.id).querySelectorAll('button[data-v]').forEach(b => {
+        b.setAttribute('aria-pressed', String(+b.dataset.v === v));
+        b.classList.toggle('theirs', !!theirs && +b.dataset.v === theirs[t.id]);
+        b.disabled = !act || finalLock;
+      });
+    } else {
+      const inp = $('f-' + t.id); inp.value = v; inp.disabled = !act || finalLock;
+      const gh = $('gh-' + t.id);
+      if (theirs) { gh.style.display = ''; gh.style.bottom = `calc(9px + ${theirs[t.id] / (t.values.length - 1)} * (100% - 18px))`; }
+      else gh.style.display = 'none';
+    }
+  });
+  // meter (own side only)
+  const mb = $('meterBox');
+  if (!app.side) { mb.classList.add('hidden'); }
+  else {
+    mb.classList.remove('hidden');
+    const isA = app.side === 'artist';
+    const val = isA ? p.av(app.draft) : p.lv(app.draft);
+    const lo = isA ? p.AVlo : p.LVlo, hi = isA ? p.AVhi : p.LVhi, walk = isA ? p.AVwalk : p.target;
+    const pct = (x) => Math.max(0, Math.min(100, (x - lo) / (hi - lo) * 100));
+    $('meterLabel').textContent = isA ? 'Value of these terms to your client' : `Value of these terms to ${LABEL}`;
+    $('meterNum').textContent = money(val);
+    $('meterFill').style.width = pct(val) + '%';
+    $('meterFill').classList.toggle('below', val < walk);
+    $('meterWalk').style.left = `calc(${pct(walk)}% - 1px)`;
+    $('meterNote').textContent = val < walk ? `Below your walk-away point (${money(walk)}). Your brief says not to sign this.` : `Above your walk-away point of ${money(walk)}.`;
+  }
+  const same = g.current && p.TERMS.every(t => app.draft[t.id] === g.current.terms[t.id]);
+  const send = $('sendBtn');
+  send.disabled = !act || finalLock || same || app.busy;
+  send.textContent = !act ? 'Not your turn' : finalLock ? 'Final offer — accept or walk' : same ? 'Change a term to counter' : g.current ? 'Send counteroffer' : 'Send opening offer';
+  $('acceptBtn').disabled = !act || !g.current || g.current.by === app.side || app.busy;
+  $('resetBtn').disabled = !act || finalLock || !g.current || same;
+  $('walkBtn').disabled = !app.side || g.status !== 'negotiating' || app.busy;
+  $('noteInput').disabled = !act || finalLock;
+  paintInspector();
+}
+
+function paintInspector() {
+  const g = app.game; if (!g) return;
+  const p = P[g.scenario], t = p.TMAP[app.sel];
+  const theirs = app.side ? lastOfferBy(g, other(app.side)) : null;
+  $('inspector').innerHTML = `<div><h3>${t.name}</h3><div class="vals">On the console: <b>${t.fmt(t.values[app.draft[t.id]])}</b>${theirs ? `<br>Their last offer: <b>${t.fmt(t.values[theirs[t.id]])}</b>` : ''}</div></div><p>${t.help}<span class="slide">${t.slide}</span></p>`;
+}
+
+function termsChanged(p, from, to) {
+  return p.TERMS.filter(t => !from || from[t.id] !== to[t.id]).map(t => `<li><b>${t.name}:</b> ${t.fmt(t.values[to[t.id]])}</li>`).join('');
+}
+function renderMail() {
+  const g = app.game, p = P[g.scenario];
+  const box = $('mail'); box.innerHTML = '';
+  let prevOffer = null;
+  const items = g.history.map(h => {
+    let html = '';
+    const who = h.side === 'artist' ? (g.sides.artist ? g.sides.artist.team + ' (artist)' : 'Artist team') : (g.sides.label ? g.sides.label.team + ` (${LABEL})` : LABEL);
+    if (h.kind === 'offer') {
+      const changes = termsChanged(p, prevOffer, h.terms);
+      html = `${prevOffer ? '<p>Counteroffer:</p>' : '<p>Opening offer:</p>'}<ul>${changes || '<li>No changes</li>'}</ul>${h.note ? `<p class="quote">“${esc(h.note)}”</p>` : ''}`;
+      prevOffer = h.terms;
+      return { cls: h.side + '-msg', who, tag: h.final ? 'Final offer' : h.side === 'artist' ? `Artist offer ${h.round}` : 'Label offer', html };
+    }
+    if (h.kind === 'accept') return { cls: h.side + '-msg', who, tag: 'Accepted', html: '<p>We accept your offer.</p>' };
+    if (h.kind === 'walk') return { cls: h.side + '-msg', who, tag: 'Walked away', html: `<p>We’re walking away.</p>${h.note ? `<p class="quote">“${esc(h.note)}”</p>` : ''}` };
+    return null;
+  }).filter(Boolean).reverse();
+  if (!items.length) box.innerHTML = `<div class="msg sys">No offers yet. ${LABEL} opens.</div>`;
+  items.forEach((it, i) => {
+    const d = document.createElement('div'); d.className = 'msg ' + it.cls + (i === 0 ? ' fresh' : '');
+    d.innerHTML = `<div class="from"><b>${esc(it.who)}</b><span>${it.tag}</span></div><div class="text">${it.html}</div>`;
+    box.appendChild(d);
+  });
+}
+
+// ---------------- Actions ----------------
+function act(action) {
+  const g = app.game; if (!g) return;
+  if (app.mode === 'local') {
+    const ng = reduce(g, app.side, action); if (!ng) return;
+    ng.rev = (ng.rev || 0) + 1;
+    app.game = ng;
+    if (ng.status === 'negotiating') app.handoffFor = ng.turn;
+    route();
+    return;
+  }
+  if (net.role === 'host') {
+    const ng = reduce(g, app.side, action); if (ng) setHostGame(ng);
+    return;
+  }
+  if (net.hostConn && net.hostConn.open) { app.busy = true; paint(); net.hostConn.send({ type: 'action', action }); setTimeout(() => { if (app.busy) { app.busy = false; if (app.game) paint(); } }, 8000); }
+  else toast('Not connected to the other team. Wait for the connection to come back, then try again.');
+}
+function sendOffer() {
+  if (!canAct()) return;
+  act({ type: 'offer', terms: { ...app.draft }, note: $('noteInput').value });
+}
+function acceptOffer() {
+  if (!canAct() || !app.game.current || app.game.current.by === app.side) return;
+  act({ type: 'accept' });
+}
+function walkAway() {
+  if (!app.side || app.game.status !== 'negotiating') return;
+  if (!confirm('Walk away from the deal? This ends the negotiation for both teams.')) return;
+  act({ type: 'walk', note: $('noteInput').value });
+}
+
+
+// ---------------- Brief ----------------
+function openBrief() {
+  const g = app.game, p = P[g.scenario], sc = p.sc;
+  let html;
+  if (app.side === 'artist') {
+    html = `<h3>Artist team brief: ${sc.name}</h3><div class="conf">Confidential — for the artist team only</div>
+      <p>You represent ${sc.name} (${sc.kind.replace(' · ', ', ')}). ${sc.blurb}</p>
+      <h4>What your client wants</h4><ul>${sc.artistBrief.map(x => `<li>${x}</li>`).join('')}</ul>
+      <h4>Your alternative</h4><p>${sc.artistAlt}</p>
+      <div class="walkval">Walk-away point: don’t agree to terms worth less than <b>${money(p.AVwalk)}</b> to your client. The meter on your desk shows the value of whatever terms are on the console, with your walk-away point marked.</div>
+      <p>Your score is how far above that point you land, compared with the best deal the label would have signed. You don’t know the label’s limits.</p>`;
+  } else {
+    const top = sc.priority.slice(0, 4), low = sc.priority.slice(-4);
+    html = `<h3>${LABEL} brief: ${sc.name}</h3><div class="conf">Confidential — for the label team only</div>
+      <p>You run business affairs at ${LABEL}. A&amp;R wants to sign ${sc.name} (${sc.kind.replace(' · ', ', ')}). ${sc.labelNote}</p>
+      <h4>What the board cares about most</h4><ol>${top.map(id => `<li><b>${P[sc.id].TMAP[id].name}.</b> ${WHY[id]}</li>`).join('')}</ol>
+      <h4>Where you can give</h4><p>The board is relatively relaxed about ${low.map(id => P[sc.id].TMAP[id].name.toLowerCase()).join(', ')}.</p>
+      <h4>Market intel</h4><p>${sc.labelIntel}</p>
+      <div class="walkval">Board minimum: don’t sign terms worth less than <b>${money(p.target)}</b> to ${LABEL}. Advance budget is capped at ${money(sc.maxAdv)}. The meter on your desk shows the value of the terms on the console, with the board minimum marked.</div>
+      <p>Your score is how far above the board minimum you land, compared with the best deal the artist would have signed. You don’t know the artist’s limits.</p>`;
+  }
+  $('briefBody').innerHTML = html;
+  app.briefSeen[(app.code || 'LOCAL') + ':' + app.side] = true;
+  if (!$('briefDlg').open) $('briefDlg').showModal();
+}
+
+// ---------------- Results ----------------
+function scoresFor(g) {
+  const p = P[g.scenario];
+  if (g.status !== 'closed') return { a: 0, l: 0, av: null, lv: null };
+  const av = p.av(g.deal), lv = p.lv(g.deal);
+  const a = Math.round((av - p.AVwalk) / Math.max(1, p.AVbest - p.AVwalk) * 100);
+  const l = Math.round((lv - p.target) / Math.max(1, p.LVbest - p.target) * 100);
+  return { a, l, av, lv };
+}
+
+function renderResults(g, fromBoard) {
+  const p = P[g.scenario], sc = p.sc, first = sc.name.split(' ')[0];
+  const R = $('results');
+  const at = g.sides.artist ? esc(g.sides.artist.team) : 'Artist team', lt = g.sides.label ? esc(g.sides.label.team) : LABEL;
+  const back = fromBoard ? `<button class="btn" type="button" id="resBoard">Back to class results</button>` : '';
+  const again = app.mode === 'local' ? `<button class="btn" type="button" id="resAgain">Play again</button>` : '';
+  if (g.status === 'nodeal') {
+    const who = g.endedBy === 'artist' ? `${at} (artist team)` : `${lt} (${LABEL})`;
+    R.innerHTML = `<div class="result-head"><div><h2>No deal.</h2><p>${who} walked away after ${g.round} artist ${g.round === 1 ? 'offer' : 'offers'}.</p></div></div>
+      <div class="cols"><div class="card"><h3>What happens now</h3><p style="font-family:var(--serif);font-size:18px;margin:0 0 10px">${first} takes their alternative: ${sc.artistAlt.split('.')[0].replace(/^./, c => c.toLowerCase())}.</p>
+      <p style="font-family:var(--serif);font-size:18px;margin:0">Both teams score 0. A deal existed that both sides could have signed — the artist’s walk-away was ${money(p.AVwalk)} and the label’s board minimum was ${money(p.target)}.</p></div>
+      <div class="card"><h3>Debrief</h3><ol class="debrief"><li>Was walking away the right call? Compare the last offer on the table with your walk-away point.</li><li>What did each team assume about the other’s limits? Where were those assumptions wrong?</li><li>Which trade could have closed the gap?</li></ol></div></div>
+      <div class="result-actions">${back}${again}<button class="btn" type="button" id="resHome">Home</button></div>`;
+  } else {
+    const deal = p.toT(g.deal), sco = scoresFor(g);
+    const cases = [['flops', { R: 0.35, N: 0.6, T: 0.5 }], ['performs as expected', { R: 1, N: 1, T: 1 }], ['breaks out', { R: 2.5, N: 2, T: 2.2 }]];
+    const rows = cases.map(([n, m]) => ({ n, e: econ(deal, sc, m) }));
+    const ex = rows[1].e;
+    const cell = (v) => `<td class="${v < 0 ? 'neg' : ''}">${money(v)}</td>`;
+    const tbl = `<table><thead><tr><th>If the album…</th><th>Label receipts</th><th>Artist cash</th><th>Label profit</th><th>Unrecouped</th></tr></thead><tbody>${rows.map(({ n, e }) => `<tr><td>${n}</td><td>${money(e.R)}</td>${cell(e.artistCash)}${cell(e.labelCash)}<td class="${e.unrecouped > 0 ? 'neg' : 'pos'}">${e.unrecouped > 0 ? money(e.unrecouped) : 'Recouped'}</td></tr>`).join('')}</tbody></table>`;
+    const good = { pts: v => v >= 16, adv: () => null, opt: v => v <= 2, mast: v => v >= 1, rerec: v => v <= 5, non: v => v <= 10, tour: v => v <= 3, shel: v => v >= 200, xc: v => v === 1, ai: v => v === 1, del: v => v === 1, prod: v => v === 1 };
+    const termsList = p.TERMS.map(t => { const v = deal[t.id]; const gd = good[t.id](v); return `<dt>${t.name}</dt><dd class="${gd === null ? '' : gd ? 'good' : 'bad'}">${t.fmt(v)}</dd>`; }).join('');
+    const q = [];
+    if (ex.unrecouped > 0) q.push(`In the expected case, ${first} is still ${money(ex.unrecouped)} unrecouped — yet ${LABEL} shows a ${money(ex.labelCash)} profit. Explain how both can be true.`);
+    else q.push(`${first} recoups in the expected case. How much did the advance and recording costs delay the first royalty check?`);
+    if (deal.xc === 0 && ex.applied > 0) q.push(`Broad cross-collateralization let ${LABEL} apply ${money(ex.applied)} of ${first}’s sync licensing share to the unrecouped balance. What could the artist team have traded to limit it?`);
+    if (deal.mast === 0) q.push(`${LABEL} owns ${first}’s masters forever. What does that mean for ${first}’s income 20 years from now, and when might the termination right under the Copyright Act matter?`);
+    if (deal.ai === 0) q.push(`The contract presumes AI consent. Describe a product ${LABEL} could license using ${first}’s voice without asking.`);
+    if (deal.tour > 0) q.push(`${LABEL} takes ${deal.tour}% of gross touring${deal.shel > 0 ? ' above ' + money(deal.shel) : ''}. If tours run at a 35% margin, what share of ${first}’s touring profit is that?`);
+    q.push('Label team: which term was cheapest for you to give? Artist team: which concession was worth the most to your client? Did you each find those trades?');
+    const memo = [`DEAL MEMO — ${sc.name} × ${LABEL}`, `Artist team: ${g.sides.artist ? g.sides.artist.team : ''} · Label team: ${g.sides.label ? g.sides.label.team : ''}${g.code !== 'LOCAL' ? ' · Game ' + g.code : ''}`,
+      `Closed after ${g.round} artist offers. Artist team score: ${sco.a}%. Label team score: ${sco.l}%.`, '',
+      ...p.TERMS.map(t => `${t.name}: ${t.fmt(deal[t.id])}`), '', 'Projected first-album cycle (3 yrs):',
+      ...rows.map(({ n, e }) => `If the album ${n}: artist cash ${money(e.artistCash)}, label profit ${money(e.labelCash)}, ${e.unrecouped > 0 ? 'unrecouped ' + money(e.unrecouped) : 'recouped'}`)].join('\n');
+    const sbox = (side, val, who, walk) => `<div class="scorebox ${side}"><div class="who">${who}</div><div class="big">${val}%</div><div class="expl">${val < 0 ? 'Below its walk-away point — this deal should not have been signed.' : `of the available surplus above its walk-away point (${money(walk)})`}</div></div>`;
+    R.innerHTML = `<div class="result-head"><div><h2>${first} signs with ${LABEL}.</h2><p>Deal closed after ${g.round} artist ${g.round === 1 ? 'offer' : 'offers'}. ${g.endedBy === 'artist' ? 'The artist team accepted the label’s offer.' : 'The label accepted the artist team’s offer.'}</p></div>
+      <div class="scores">${sbox('artist', sco.a, `${at} · artist team`, p.AVwalk)}${sbox('label', sco.l, `${lt} · ${LABEL}`, p.target)}</div></div>
+      <div class="cols"><div style="display:grid;gap:18px">
+        <div class="card"><h3>What the deal pays</h3><p class="sub">First album cycle, about three years. Artist cash includes the advance, royalties after recoupment, sync, other income after the 360 cut, and touring profit.</p><div class="tbl">${tbl}</div></div>
+        <div class="card"><h3>Debrief</h3><ol class="debrief">${q.map(x => `<li>${x}</li>`).join('')}</ol></div>
+      </div><div class="card"><h3>Final terms</h3><p class="sub">Green is artist-friendly for this market; red favors the label.</p><dl class="terms-list">${termsList}</dl></div></div>
+      <div class="result-actions"><button class="btn primary" type="button" id="copyBtn" style="grid-column:auto">Copy deal memo</button>${back}${again}<button class="btn" type="button" id="resHome">Home</button></div>`;
+    $('copyBtn').onclick = async () => {
+      try { await navigator.clipboard.writeText(memo); toast('Deal memo copied'); }
+      catch (e) { const ta = document.createElement('textarea'); ta.value = memo; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); toast('Deal memo copied'); } catch (_) { toast('Copy failed — select the terms and copy them manually'); } ta.remove(); }
+    };
+  }
+  $('resHome').onclick = () => { if (fromBoard) { closeBoard(); } leaveGame(); };
+  if (fromBoard) $('resBoard').onclick = () => show('board');
+  if (app.mode === 'local' && $('resAgain')) $('resAgain').onclick = () => { app.localClient = g.scenario; startLocal(); };
+}
+
+// ---------------- Instructor dashboard ----------------
+const board = { code: null, games: {}, peer: null };
+function openDashboard(existing) {
+  const code = existing || store.get('classCode') || newCode(5);
+  board.code = code; store.set('classCode', code);
+  board.games = store.get('board.' + code) || {};
+  $('classCode').textContent = code;
+  show('board');
+  renderBoard();
+  if (!peerAvailable()) { $('boardStatus').textContent = 'Live reporting couldn’t load. Results from this browser only.'; return; }
+  if (board.peer) return;
+  startBoardPeer(0);
+}
+function startBoardPeer(attempt) {
+  const peer = new Peer(PREFIX + 'class-' + board.code, { debug: 0 });
+  board.peer = peer;
+  $('boardStatus').textContent = 'Connecting…';
+  peer.on('open', () => { $('boardStatus').textContent = 'Live — games that use this class code report here while this page is open.'; });
+  peer.on('connection', conn => {
+    conn.on('data', d => {
+      if (!d || d.type !== 'report' || !d.game || !d.game.code || !SCENARIOS[d.game.scenario]) return;
+      const g = d.game;
+      board.games[g.code] = { code: String(g.code).slice(0, 4), scenario: g.scenario, status: g.status, round: g.round, deal: g.deal, endedBy: g.endedBy, sides: g.sides, history: g.history, createdAt: g.createdAt, current: g.current, final: g.final, turn: g.turn, rev: g.rev };
+      store.set('board.' + board.code, board.games);
+      renderBoard();
+    });
+  });
+  peer.on('disconnected', () => { try { peer.reconnect(); } catch (_) {} });
+  peer.on('error', e => {
+    if (e.type === 'unavailable-id' && attempt < 12) { $('boardStatus').textContent = 'This class code is open in another tab or was just closed. Retrying…'; try { peer.destroy(); } catch (_) {} board.peer = null; setTimeout(() => startBoardPeer(attempt + 1), 2500); return; }
+    if (e.type === 'unavailable-id') { $('boardStatus').textContent = 'This class code is open somewhere else. Close the other tab, or start a new class code.'; return; }
+    if (e.type !== 'peer-unavailable') $('boardStatus').textContent = peerErrorText(e);
+  });
+}
+function closeBoard() { /* the dashboard keeps listening while the page is open */ }
+function renderBoard() {
+  const list = Object.values(board.games).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+  if (!list.length) { $('boardTable').innerHTML = `<p>No games yet. Give students the class code <b>${board.code}</b> to enter when they start a game.</p>`; return; }
+  const rows = list.map(g => {
+    const sc = SCENARIOS[g.scenario];
+    const sco = scoresFor(g);
+    const st = g.status === 'closed' ? '<span class="st-closed">Deal</span>' : g.status === 'nodeal' ? '<span class="st-nodeal">No deal</span>' : g.status === 'lobby' ? '<span class="st-live">Waiting</span>' : `<span class="st-live">Negotiating (${g.round}/6)</span>`;
+    const done = g.status === 'closed' || g.status === 'nodeal';
+    return `<tr><td>${esc(g.code)}</td><td>${sc.name}</td><td>${g.sides && g.sides.artist ? esc(g.sides.artist.team) : '—'}</td><td>${g.sides && g.sides.label ? esc(g.sides.label.team) : '—'}</td><td>${st}</td>
+      <td>${g.status === 'closed' ? sco.a + '%' : done ? '0%' : ''}</td><td>${g.status === 'closed' ? sco.l + '%' : done ? '0%' : ''}</td>
+      <td>${done ? `<button class="rowbtn" data-open="${esc(g.code)}">View</button>` : ''}</td></tr>`;
+  }).join('');
+  $('boardTable').innerHTML = `<table><thead><tr><th>Game</th><th>Client</th><th>Artist team</th><th>Label team</th><th>Status</th><th>Artist score</th><th>Label score</th><th></th></tr></thead><tbody>${rows}</tbody></table>`;
+  $('boardTable').querySelectorAll('[data-open]').forEach(b => b.onclick = () => { const g = board.games[b.dataset.open]; if (g) { renderResults(clone(g), true); show('results'); } });
+}
+function exportCsv() {
+  const list = Object.values(board.games);
+  if (!list.length) { toast('No results to export yet.'); return; }
+  const termIds = P.juno.TERMS.map(t => t.id);
+  const head = ['Game', 'Client', 'Artist team', 'Label team', 'Status', 'Artist offers', 'Artist score %', 'Label score %', ...P.juno.TERMS.map(t => t.name)];
+  const q = (v) => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+  const lines = [head.map(q).join(',')];
+  list.forEach(g => {
+    const p = P[g.scenario], sco = scoresFor(g);
+    const deal = g.deal ? p.toT(g.deal) : null;
+    lines.push([g.code, p.sc.name, g.sides && g.sides.artist ? g.sides.artist.team : '', g.sides && g.sides.label ? g.sides.label.team : '', g.status, g.round,
+      g.status === 'closed' ? sco.a : (g.status === 'nodeal' ? 0 : ''), g.status === 'closed' ? sco.l : (g.status === 'nodeal' ? 0 : ''),
+      ...termIds.map(id => deal ? p.TMAP[id].fmt(deal[id]) : '')].map(q).join(','));
+  });
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `deal-desk-results-${board.code}.csv`;
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+
+// ---------------- Wiring ----------------
+renderHome();
+$('createBtn').addEventListener('click', createOnline);
+$('joinBtn').addEventListener('click', joinOnline);
+$('joinCode').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z]/g, ''); });
+$('newClass').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z]/g, ''); });
+$('localBtn').addEventListener('click', startLocal);
+$('dashBtn').addEventListener('click', () => openDashboard());
+$('boardBack').addEventListener('click', () => show('home'));
+$('csvBtn').addEventListener('click', exportCsv);
+$('newClassBtn').addEventListener('click', () => {
+  if (!confirm('Start a new class code? Results for the current code stay saved in this browser.')) return;
+  try { if (board.peer) board.peer.destroy(); } catch (_) {}
+  board.peer = null; store.del('classCode'); openDashboard(newCode(5));
+});
+$('clearBtn').addEventListener('click', () => { if (!confirm('Clear all results for this class code from this browser?')) return; board.games = {}; store.del('board.' + board.code); renderBoard(); });
+$('lobbyLeave').addEventListener('click', () => { if (net.role === 'host' && !confirm('Leave? The other team won’t be able to join until you resume this game.')) return; leaveGame(); });
+$('leaveBtn').addEventListener('click', () => {
+  if (app.game && app.game.status === 'negotiating' && !confirm(app.mode === 'local' ? 'Leave this game? Nothing is saved.' : net.role === 'host' ? 'Leave? Your browser is hosting this game, so the other team will be disconnected until you resume it from the home screen.' : 'Leave? You can rejoin from the home screen.')) return;
+  leaveGame();
+});
+$('sendBtn').addEventListener('click', sendOffer);
+$('acceptBtn').addEventListener('click', acceptOffer);
+$('resetBtn').addEventListener('click', () => { if (app.game.current) { app.draft = { ...app.game.current.terms }; paint(); } });
+$('walkBtn').addEventListener('click', walkAway);
+$('briefBtn').addEventListener('click', openBrief);
+$('briefClose').addEventListener('click', () => $('briefDlg').close());
+$('handoffBtn').addEventListener('click', () => { $('handoff').classList.add('hidden'); app.handoffFor = null; if (!app.briefSeen['LOCAL:' + app.side]) openBrief(); });
+window.addEventListener('beforeunload', (e) => { if (net.role === 'host' && app.game && app.game.status === 'negotiating') { e.preventDefault(); e.returnValue = ''; } });
+if (!peerAvailable()) { $('onlineNotice').classList.remove('hidden'); $('onlineNotice').textContent = 'Online play couldn’t load in this browser. One-screen mode still works.'; $('createBtn').disabled = true; $('joinBtn').disabled = true; }
+})();
+
+</script>
+</body>
+</html>
