@@ -284,6 +284,13 @@ dialog::backdrop { background: rgba(20, 26, 30, .55); }
 @media (max-width: 860px) {
   .home-grid, .teams, .scores { grid-template-columns: 1fr; }
 }
+.bio { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; margin: 4px 0 0; font-size: 14px; line-height: 1.35; }
+.bio dt { color: var(--muted); }
+.bio dd { margin: 0; font-weight: 600; }
+.dlg-body .bio { font-family: var(--sans); font-size: 14px; background: var(--panel-2); border-radius: 6px; padding: 10px 12px; margin-bottom: 12px; }
+.instr-link { position: absolute; top: 0; right: 0; background: var(--panel); border: 0; border-radius: 20px; padding: 8px 14px; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: inset 0 0 0 1px var(--groove); z-index: 2; }
+.instr-link:hover { box-shadow: inset 0 0 0 2px var(--artist); }
+#home { position: relative; }
 </style>
 </head>
 <body>
@@ -291,6 +298,7 @@ dialog::backdrop { background: rgba(20, 26, 30, .55); }
 
 <!-- ===================== HOME ===================== -->
 <section id="home">
+  <button class="instr-link" type="button" id="instrTop">Instructor dashboard</button>
   <div class="intro-head">
     <div><h1>The Deal<br>Desk</h1></div>
     <div>
@@ -301,6 +309,8 @@ dialog::backdrop { background: rgba(20, 26, 30, .55); }
   </div>
   <p style="font-family:var(--serif);font-size:21px;line-height:1.5;max-width:42em;margin:0 0 24px">Two teams, one record deal. One team represents the artist. The other is business affairs at 480 Collective, the label making the offer. Each team gets a confidential brief, and you trade offers on a mixing console until you close — or someone walks.</p>
 
+  <h2 class="section-title">The clients</h2>
+  <div class="clients" id="clients" style="margin-bottom:28px"></div>
   <div id="onlineNotice" class="notice hidden"></div>
   <div id="resumeBox" class="panel hidden" style="margin-bottom:16px"><h3>Pick up where you left off</h3><div class="side-row" id="resumeBtns" style="margin-top:8px;align-items:center"></div></div>
 
@@ -343,43 +353,6 @@ dialog::backdrop { background: rgba(20, 26, 30, .55); }
     <button class="btn" type="button" id="dashBtn">Open class dashboard</button>
   </div>
 
-  <h2 class="section-title">The clients</h2>
-  <div class="clients" id="clients"></div>
-
-  <details class="teacher">
-    <summary>Instructor notes</summary>
-    <div class="body">
-      <div>
-        <h4>Setup</h4>
-        <ol>
-          <li>Put this one file anywhere students can open it in a browser: your course site or LMS, GitHub Pages, Netlify, or a shared drive. No account or server is needed.</li>
-          <li>Open the class dashboard on your computer and project or share the five-letter class code.</li>
-          <li>Pair teams of 2–4, one device per team. One team starts a game (entering the class code) and reads its four-letter game code to the other team.</li>
-          <li>Run all pairs with the same client first (Hollis is a good warm-up), then switch sides and clients.</li>
-          <li>If a campus network blocks direct connections, use one-screen mode: teams pass a laptop between turns.</li>
-        </ol>
-        <h4>Rules of play</h4>
-        <ul>
-          <li>480 Collective makes the opening offer. The teams then alternate offers, and each offer can include a short note.</li>
-          <li>Either side can accept the other side’s offer on its turn, or walk away at any time.</li>
-          <li>After the artist team’s sixth offer, the label’s response is final: the artist must accept or walk.</li>
-          <li>Each team sees only its own value meter and walk-away point. Briefs are confidential — no showing screens.</li>
-        </ul>
-      </div>
-      <div>
-        <h4>Debrief</h4>
-        <ul>
-          <li>Open the class dashboard and compare deals for the same client. Why did outcomes differ so much?</li>
-          <li>Which terms were cheap for the label to give but valuable to the artist? Did teams find those trades?</li>
-          <li>Did anyone bluff about a competing offer? How did the label team decide whether to believe it?</li>
-          <li>Find a deal where the artist is unrecouped in the “expected” case while the label is profitable. Walk the class through why.</li>
-          <li>Did any pair fail to close even though a deal was possible? What got in the way?</li>
-        </ul>
-        <h4>Scoring</h4>
-        <p style="margin:0">Each team’s score is the share of the available surplus it captured: how far above its own walk-away point the final deal landed, compared with the best deal the other side would have signed. Walking away scores 0. The numbers are illustrative, based on a simplified model of royalties, recoupment, 360 income and catalog value across flop, expected and breakout outcomes.</p>
-      </div>
-    </div>
-  </details>
 </section>
 
 <!-- ===================== LOBBY ===================== -->
@@ -459,6 +432,40 @@ dialog::backdrop { background: rgba(20, 26, 30, .55); }
     <div class="side-row" style="margin:0"><button class="btn" type="button" id="csvBtn">Export results (CSV)</button><button class="btn" type="button" id="newClassBtn">New class code</button><button class="btn" type="button" id="clearBtn">Clear results</button></div>
   </div>
   <div class="card"><div class="tbl" id="boardTable"><p>Loading…</p></div></div>
+  <details class="teacher">
+    <summary>Instructor notes</summary>
+    <div class="body">
+      <div>
+        <h4>Setup</h4>
+        <ol>
+          <li>Put this one file anywhere students can open it in a browser: your course site or LMS, GitHub Pages, Netlify, or a shared drive. No account or server is needed.</li>
+          <li>Open the class dashboard on your computer and project or share the five-letter class code.</li>
+          <li>Pair teams of 2–4, one device per team. One team starts a game (entering the class code) and reads its four-letter game code to the other team.</li>
+          <li>Run all pairs with the same client first (Hollis is a good warm-up), then switch sides and clients.</li>
+          <li>If a campus network blocks direct connections, use one-screen mode: teams pass a laptop between turns.</li>
+        </ol>
+        <h4>Rules of play</h4>
+        <ul>
+          <li>480 Collective makes the opening offer. The teams then alternate offers, and each offer can include a short note.</li>
+          <li>Either side can accept the other side’s offer on its turn, or walk away at any time.</li>
+          <li>After the artist team’s sixth offer, the label’s response is final: the artist must accept or walk.</li>
+          <li>Each team sees only its own value meter and walk-away point. Briefs are confidential — no showing screens.</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Debrief</h4>
+        <ul>
+          <li>Open the class dashboard and compare deals for the same client. Why did outcomes differ so much?</li>
+          <li>Which terms were cheap for the label to give but valuable to the artist? Did teams find those trades?</li>
+          <li>Did anyone bluff about a competing offer? How did the label team decide whether to believe it?</li>
+          <li>Find a deal where the artist is unrecouped in the “expected” case while the label is profitable. Walk the class through why.</li>
+          <li>Did any pair fail to close even though a deal was possible? What got in the way?</li>
+        </ul>
+        <h4>Scoring</h4>
+        <p style="margin:0">Each team’s score is the share of the available surplus it captured: how far above its own walk-away point the final deal landed, compared with the best deal the other side would have signed. Walking away scores 0. The numbers are illustrative, based on a simplified model of royalties, recoupment, 360 income and catalog value across flop, expected and breakout outcomes.</p>
+      </div>
+    </div>
+  </details>
 </section>
 
 </div>
@@ -466,6 +473,16 @@ dialog::backdrop { background: rgba(20, 26, 30, .55); }
 <dialog id="briefDlg" aria-labelledby="briefTitle">
   <div class="dlg-body" id="briefBody"></div>
   <div class="dlg-foot"><button class="btn primary" type="button" id="briefClose" style="grid-column:auto">Close brief</button></div>
+</dialog>
+
+<dialog id="pwDlg" aria-labelledby="pwTitle">
+  <div class="dlg-body">
+    <h3 id="pwTitle">Instructor password</h3>
+    <p style="font-family:var(--sans);font-size:15px;color:var(--muted);margin:4px 0 14px">Enter the password to open the class dashboard.</p>
+    <div class="field" style="margin-bottom:6px"><span>Password</span><input type="password" id="pwInput" autocomplete="off"></div>
+    <p class="errline" id="pwErr"></p>
+  </div>
+  <div class="dlg-foot"><button class="btn" type="button" id="pwCancel">Cancel</button><button class="btn primary" type="button" id="pwOk" style="grid-column:auto">Open dashboard</button></div>
 </dialog>
 
 <div class="handoff hidden" id="handoff">
@@ -508,6 +525,7 @@ const SCENARIOS = {
     id: 'juno', name: 'Juno Vale', kind: 'Bedroom pop · Los Angeles',
     blurb: 'A self-released EP went viral. 9 million monthly listeners, a sold-out first tour, and several labels calling.',
     stats: [['Monthly listeners', '9.1M'], ['Leverage', 3]],
+    bio: [['Age', '22'], ['Genre', 'Bedroom pop / indie pop'], ['Career stage', 'Breakout — 18 months since first release'], ['Monthly listeners', '9.1M'], ['Typical venue', '1,500–2,500-cap theaters; first headline tour sold out'], ['Recent release', 'Self-released EP; lead single passed 400M streams after a TikTok trend'], ['Socials', '2.4M TikTok followers'], ['Team', 'Manager and booking agent; no label or publisher']],
     R: 2400, N: 900, T: 3000, S: 300, rec: 250, mkt: 600, maxAdv: 750,
     give: 0.45, walkF: 0.4,
     opening: { pts: 16, adv: 300, opt: 4, mast: 0, rerec: 7, non: 15, tour: 5, shel: 100, xc: 0, ai: 0, del: 0, prod: 0 },
@@ -524,6 +542,7 @@ const SCENARIOS = {
     id: 'delta', name: 'Delta Ray', kind: 'Hip-hop · Memphis',
     blurb: 'A regional favorite with packed local shows and a street single climbing radio charts. An indie has floated a distribution deal.',
     stats: [['Monthly listeners', '620K'], ['Leverage', 2]],
+    bio: [['Age', '27'], ['Genre', 'Southern hip-hop'], ['Career stage', 'Established regional act — four mixtapes in five years'], ['Monthly listeners', '620K'], ['Typical venue', '300–800-cap clubs across the South; festival side stages'], ['Recent release', 'Single in the top 20 on regional hip-hop radio'], ['Socials', '310K Instagram followers'], ['Team', 'Longtime manager; owns a home studio; never signed']],
     R: 900, N: 300, T: 700, S: 80, rec: 120, mkt: 250, maxAdv: 350,
     give: 0.3, walkF: 0.25,
     opening: { pts: 14, adv: 100, opt: 4, mast: 0, rerec: 7, non: 20, tour: 7, shel: 0, xc: 0, ai: 0, del: 0, prod: 0 },
@@ -540,6 +559,7 @@ const SCENARIOS = {
     id: 'hollis', name: 'Hollis Ames', kind: 'Singer-songwriter · Minneapolis',
     blurb: 'Great songs and a loyal local following. One A&R rep at 480 Collective believes in her. No one else has called.',
     stats: [['Monthly listeners', '38K'], ['Leverage', 1]],
+    bio: [['Age', '31'], ['Genre', 'Folk / singer-songwriter'], ['Career stage', 'Developing — two self-released albums'], ['Monthly listeners', '38K'], ['Typical venue', '100–200-cap clubs and listening rooms; occasional opening slots'], ['Recent release', 'A song placed in an indie film'], ['Socials', '12K Instagram followers'], ['Team', 'Self-managed']],
     R: 300, N: 80, T: 150, S: 40, rec: 60, mkt: 120, maxAdv: 150,
     give: 0.15, walkF: -0.4,
     opening: { pts: 12, adv: 25, opt: 5, mast: 0, rerec: 10, non: 25, tour: 10, shel: 0, xc: 0, ai: 0, del: 0, prod: 0 },
@@ -665,6 +685,7 @@ const app = {
   busy: false, briefSeen: {}, newClient: 'hollis', newSide: 'artist', localClient: 'hollis', handoffFor: null,
 };
 const VIEWS = ['home', 'lobby', 'play', 'results', 'board'];
+function ask(q) { try { const r = window.confirm(q); return r; } catch (_) { return true; } }
 function show(v) { VIEWS.forEach(x => $(x).classList.toggle('hidden', x !== v)); window.scrollTo({ top: 0 }); }
 function toast(t) { const el = $('toast'); el.textContent = t; el.classList.remove('hidden'); clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.add('hidden'), 3000); }
 const other = (s) => s === 'artist' ? 'label' : 'artist';
@@ -699,7 +720,7 @@ function renderHome() {
     const d = document.createElement('div'); d.className = 'client'; d.style.cursor = 'default';
     const lev = c.stats[1][1];
     d.innerHTML = `<div><h3>${c.name}</h3><div class="kind">${c.kind}</div></div><p>${c.blurb}</p>
-      <dl><dt>${c.stats[0][0]}</dt><dd>${c.stats[0][1]}</dd><dt>Leverage</dt><dd><span class="lev" aria-label="${lev} of 3">${[1, 2, 3].map(i => `<i class="${i <= lev ? 'on' : ''}"></i>`).join('')}</span></dd></dl>`;
+      <dl class="bio">${c.bio.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}<dt>Leverage</dt><dd><span class="lev" aria-label="${lev} of 3">${[1, 2, 3].map(i => `<i class="${i <= lev ? 'on' : ''}"></i>`).join('')}</span></dd></dl>`;
     box.appendChild(d);
   });
   renderResume();
@@ -737,7 +758,22 @@ function setConn(state, text) {
   pill.className = 'connpill ' + state; pill.textContent = text;
   pill.classList.toggle('hidden', app.mode !== 'online');
 }
-function peerAvailable() { return typeof window.Peer === 'function'; }
+function peerAvailable() { return typeof window.Peer === 'function' && typeof window.RTCPeerConnection === 'function' && typeof window.WebSocket === 'function'; }
+function makePeer(id) {
+  try { return id ? new Peer(id, { debug: 0 }) : new Peer({ debug: 0 }); }
+  catch (e) { return null; }
+}
+const RESTRICTED_MSG = 'Online play is blocked where this page is open. If you’re viewing it in a file preview or an LMS preview pane, download the file and open it in Chrome, Edge, Firefox or Safari — or use one-screen mode below.';
+function connectionFailed(where) {
+  teardown();
+  app.mode = null;
+  setConn('wait', '');
+  const n = $('onlineNotice'); n.classList.remove('hidden'); n.textContent = RESTRICTED_MSG;
+  if (where === 'join') { $('joinErr').textContent = 'Couldn’t connect. See the note at the top of the page.'; $('joinBtn').disabled = false; }
+  else if (where === 'board') { $('boardStatus').textContent = 'Live reporting is blocked where this page is open. Open the file directly in your browser.'; }
+  else { $('newErr').textContent = 'Couldn’t connect. See the note at the top of the page.'; $('createBtn').disabled = false; }
+  if (where !== 'board') show('home');
+}
 function teardown() {
   net.closing = true;
   clearTimeout(net.retry);
@@ -772,7 +808,8 @@ function hostStart(code, game, classCode, attempt = 0) {
   const myCode = code || newCode();
   $('createBtn').disabled = true;
   setConn('wait', 'Connecting…');
-  const peer = new Peer(PREFIX + myCode, { debug: 0 });
+  const peer = makePeer(PREFIX + myCode);
+  if (!peer) { connectionFailed('host'); return; }
   net.peer = peer;
   peer.on('open', () => {
     $('createBtn').disabled = false;
@@ -872,12 +909,15 @@ function guestJoin(code, team) {
   store.set('guest', { code, team });
   $('joinBtn').disabled = true;
   setConn('wait', 'Connecting…');
-  const peer = new Peer({ debug: 0 });
+  const peer = makePeer(null);
+  if (!peer) { connectionFailed('join'); return; }
   net.peer = peer;
   let welcomed = false;
   const failTimer = setTimeout(() => { if (!welcomed && net.peer === peer) { $('joinErr').textContent = 'Couldn’t reach that game. Check the code, and make sure the other team’s page is still open.'; $('joinBtn').disabled = false; leaveGame(true); } }, 15000);
   const connect = () => {
-    const conn = peer.connect(PREFIX + code, { reliable: true });
+    let conn;
+    try { conn = peer.connect(PREFIX + code, { reliable: true }); } catch (e) { connectionFailed('join'); return; }
+    if (!conn) { connectionFailed('join'); return; }
     net.hostConn = conn;
     conn.on('open', () => { conn.send({ type: 'join', token: TOKEN, team }); });
     conn.on('data', d => {
@@ -917,7 +957,9 @@ function connectClass() {
   if (!net.classCode || !net.peer || net.role !== 'host') return;
   if (net.classConn && (net.classConn.open || net.classPending)) return;
   net.classPending = true;
-  const conn = net.peer.connect(PREFIX + 'class-' + net.classCode, { reliable: true });
+  let conn;
+  try { conn = net.peer.connect(PREFIX + 'class-' + net.classCode, { reliable: true }); } catch (e) { net.classPending = false; return; }
+  if (!conn) { net.classPending = false; return; }
   net.classConn = conn;
   const done = () => { if (net.classConn === conn) net.classPending = false; };
   conn.on('open', () => { done(); if (app.game && app.game.code) conn.send({ type: 'report', game: app.game }); });
@@ -1204,7 +1246,7 @@ function acceptOffer() {
 }
 function walkAway() {
   if (!app.side || app.game.status !== 'negotiating') return;
-  if (!confirm('Walk away from the deal? This ends the negotiation for both teams.')) return;
+  if (!ask('Walk away from the deal? This ends the negotiation for both teams.')) return;
   act({ type: 'walk', note: $('noteInput').value });
 }
 
@@ -1216,6 +1258,7 @@ function openBrief() {
   if (app.side === 'artist') {
     html = `<h3>Artist team brief: ${sc.name}</h3><div class="conf">Confidential — for the artist team only</div>
       <p>You represent ${sc.name} (${sc.kind.replace(' · ', ', ')}). ${sc.blurb}</p>
+      <dl class="bio">${sc.bio.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl>
       <h4>What your client wants</h4><ul>${sc.artistBrief.map(x => `<li>${x}</li>`).join('')}</ul>
       <h4>Your alternative</h4><p>${sc.artistAlt}</p>
       <div class="walkval">Walk-away point: don’t agree to terms worth less than <b>${money(p.AVwalk)}</b> to your client. The meter on your desk shows the value of whatever terms are on the console, with your walk-away point marked.</div>
@@ -1224,6 +1267,7 @@ function openBrief() {
     const top = sc.priority.slice(0, 4), low = sc.priority.slice(-4);
     html = `<h3>${LABEL} brief: ${sc.name}</h3><div class="conf">Confidential — for the label team only</div>
       <p>You run business affairs at ${LABEL}. A&amp;R wants to sign ${sc.name} (${sc.kind.replace(' · ', ', ')}). ${sc.labelNote}</p>
+      <dl class="bio">${sc.bio.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl>
       <h4>What the board cares about most</h4><ol>${top.map(id => `<li><b>${P[sc.id].TMAP[id].name}.</b> ${WHY[id]}</li>`).join('')}</ol>
       <h4>Where you can give</h4><p>The board is relatively relaxed about ${low.map(id => P[sc.id].TMAP[id].name.toLowerCase()).join(', ')}.</p>
       <h4>Market intel</h4><p>${sc.labelIntel}</p>
@@ -1311,7 +1355,8 @@ function openDashboard(existing) {
   startBoardPeer(0);
 }
 function startBoardPeer(attempt) {
-  const peer = new Peer(PREFIX + 'class-' + board.code, { debug: 0 });
+  const peer = makePeer(PREFIX + 'class-' + board.code);
+  if (!peer) { connectionFailed('board'); return; }
   board.peer = peer;
   $('boardStatus').textContent = 'Connecting…';
   peer.on('open', () => { $('boardStatus').textContent = 'Live — games that use this class code report here while this page is open.'; });
@@ -1366,6 +1411,21 @@ function exportCsv() {
   document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
 }
 
+// ---------------- Safety net ----------------
+// Errors thrown inside the connection library (for example when a preview pane blocks
+// network connections) arrive here instead of crashing the page.
+function onStrayError(ev) {
+  const where = !$('board').classList.contains('hidden') ? 'board' : net.role === 'guest' ? 'join' : 'host';
+  const live = net.peer || board.peer;
+  if (!live) return;
+  if (ev && typeof ev.preventDefault === 'function') ev.preventDefault();
+  if (app.game && app.game.status === 'negotiating' && app.mode === 'online') { setConn('bad', 'Connection problem — retrying'); return; }
+  if (where === 'board') { try { board.peer && board.peer.destroy(); } catch (_) {} board.peer = null; }
+  connectionFailed(where);
+}
+window.addEventListener('error', onStrayError);
+window.addEventListener('unhandledrejection', onStrayError);
+
 // ---------------- Wiring ----------------
 renderHome();
 $('createBtn').addEventListener('click', createOnline);
@@ -1373,18 +1433,36 @@ $('joinBtn').addEventListener('click', joinOnline);
 $('joinCode').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z]/g, ''); });
 $('newClass').addEventListener('input', e => { e.target.value = e.target.value.toUpperCase().replace(/[^A-Z]/g, ''); });
 $('localBtn').addEventListener('click', startLocal);
-$('dashBtn').addEventListener('click', () => openDashboard());
+const DASH_HASH = 'd9718980';
+const fnv = (t) => { let h = 0x811c9dc5; for (const b of new TextEncoder().encode(t)) { h ^= b; h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).padStart(8, '0'); };
+const dashUnlocked = () => { try { return sessionStorage.getItem('dealdesk.dash') === DASH_HASH; } catch (_) { return false; } };
+function askPassword() {
+  if (dashUnlocked()) { openDashboard(); return; }
+  $('pwInput').value = ''; $('pwErr').textContent = '';
+  $('pwDlg').showModal(); $('pwInput').focus();
+}
+function checkPassword() {
+  if (fnv($('pwInput').value.trim()) === DASH_HASH) {
+    try { sessionStorage.setItem('dealdesk.dash', DASH_HASH); } catch (_) {}
+    $('pwDlg').close(); openDashboard();
+  } else { $('pwErr').textContent = 'That password isn’t right.'; $('pwInput').select(); }
+}
+$('dashBtn').addEventListener('click', askPassword);
+$('instrTop').addEventListener('click', askPassword);
+$('pwOk').addEventListener('click', checkPassword);
+$('pwCancel').addEventListener('click', () => $('pwDlg').close());
+$('pwInput').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); checkPassword(); } });
 $('boardBack').addEventListener('click', () => show('home'));
 $('csvBtn').addEventListener('click', exportCsv);
 $('newClassBtn').addEventListener('click', () => {
-  if (!confirm('Start a new class code? Results for the current code stay saved in this browser.')) return;
+  if (!ask('Start a new class code? Results for the current code stay saved in this browser.')) return;
   try { if (board.peer) board.peer.destroy(); } catch (_) {}
   board.peer = null; store.del('classCode'); openDashboard(newCode(5));
 });
-$('clearBtn').addEventListener('click', () => { if (!confirm('Clear all results for this class code from this browser?')) return; board.games = {}; store.del('board.' + board.code); renderBoard(); });
-$('lobbyLeave').addEventListener('click', () => { if (net.role === 'host' && !confirm('Leave? The other team won’t be able to join until you resume this game.')) return; leaveGame(); });
+$('clearBtn').addEventListener('click', () => { if (!ask('Clear all results for this class code from this browser?')) return; board.games = {}; store.del('board.' + board.code); renderBoard(); });
+$('lobbyLeave').addEventListener('click', () => { if (net.role === 'host' && !ask('Leave? The other team won’t be able to join until you resume this game.')) return; leaveGame(); });
 $('leaveBtn').addEventListener('click', () => {
-  if (app.game && app.game.status === 'negotiating' && !confirm(app.mode === 'local' ? 'Leave this game? Nothing is saved.' : net.role === 'host' ? 'Leave? Your browser is hosting this game, so the other team will be disconnected until you resume it from the home screen.' : 'Leave? You can rejoin from the home screen.')) return;
+  if (app.game && app.game.status === 'negotiating' && !ask(app.mode === 'local' ? 'Leave this game? Nothing is saved.' : net.role === 'host' ? 'Leave? Your browser is hosting this game, so the other team will be disconnected until you resume it from the home screen.' : 'Leave? You can rejoin from the home screen.')) return;
   leaveGame();
 });
 $('sendBtn').addEventListener('click', sendOffer);
